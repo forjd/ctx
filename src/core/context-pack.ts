@@ -13,7 +13,7 @@ export async function buildContextPack(
 ): Promise<{ pack: ContextPack; history: string[] }> {
   const ranked = rankFiles(files, task);
   const targetPaths = ranked.map((file) => file.path);
-  const tests = recommendTests(files, targetPaths, project.frameworks);
+  const tests = recommendTests(files, targetPaths);
   const history = await gitHistoryForTerms(root, taskTerms(task).slice(0, 6));
   const suggestedCommands = [
     ...tests.slice(0, 3).map((test) => test.command),

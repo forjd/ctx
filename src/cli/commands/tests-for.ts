@@ -16,7 +16,7 @@ export async function testsForCommand(root: string, args: CliArgs): Promise<void
   const targets = args.flags.has("changed") ? await changedFiles(root) : args.positionals;
   if (targets.length === 0) throw new Error("Usage: ctx tests-for <file|--changed>");
 
-  const direct = recommendTests(files, targets, project.frameworks);
+  const direct = recommendTests(files, targets);
   const broader = broaderTestCommands(targets.join(" "), project.frameworks);
   const reasoning = direct.length
     ? direct.map((test) => `${test.path}: ${test.reason}`)

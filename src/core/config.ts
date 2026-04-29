@@ -14,6 +14,7 @@ export const defaultIgnoredDirectories = [
   "build",
   ".next",
   "coverage",
+  "opensrc",
 ];
 
 export function defaultConfig(): ProjectConfig {

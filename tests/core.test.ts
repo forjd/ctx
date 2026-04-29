@@ -73,12 +73,7 @@ describe("context pack behaviours", () => {
 
   test("tests-for finds direct filename matches", async () => {
     const files = await scanRepository(laravelFixture);
-    const project = await detectProject(laravelFixture);
-    const tests = recommendTests(
-      files,
-      ["app/Jobs/SendSourceOfFundsReminderJob.php"],
-      project.frameworks,
-    );
+    const tests = recommendTests(files, ["app/Jobs/SendSourceOfFundsReminderJob.php"]);
     expect(tests[0]?.path).toBe("tests/Feature/SourceOfFundsReminderTest.php");
   });
 

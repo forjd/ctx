@@ -21,12 +21,39 @@ const categoryBoosts: Record<string, string[]> = {
   vue: ["frontend-page", "frontend-component"],
 };
 
+const stopWords = new Set([
+  "add",
+  "app",
+  "and",
+  "component",
+  "components",
+  "composable",
+  "composables",
+  "controller",
+  "controllers",
+  "for",
+  "from",
+  "handle",
+  "handling",
+  "http",
+  "into",
+  "page",
+  "pages",
+  "resource",
+  "resources",
+  "service",
+  "services",
+  "the",
+  "use",
+  "with",
+]);
+
 export function taskTerms(task: string): string[] {
   const raw = task
     .toLowerCase()
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .split(/[^a-z0-9_-]+/)
-    .filter((term) => term.length > 2);
+    .filter((term) => term.length > 2 && !stopWords.has(term));
   const expanded = new Set(raw);
   for (const term of raw) {
     expanded.add(term.replace(/[-_]/g, ""));
@@ -44,6 +71,15 @@ export function rankFiles(files: IndexedFile[], task: string): RankedFile[] {
 
   return files
     .map((file) => {
+      if (file.isGenerated) {
+        return {
+          path: file.path,
+          score: -100,
+          category: file.category,
+          reason: "generated or dependency file",
+        };
+      }
+
       const pathText = normalise(file.path);
       const contentTerms = terms.filter((term) => file.hash && pathText.includes(normalise(term)));
       let score = 0;
@@ -102,12 +138,8 @@ export function rankFiles(files: IndexedFile[], task: string): RankedFile[] {
     .slice(0, 12);
 }
 
-export function recommendTests(
-  files: IndexedFile[],
-  targetPaths: string[],
-  frameworks: Framework[],
-): TestRecommendation[] {
-  const tests = files.filter((file) => file.isTest);
+export function recommendTests(files: IndexedFile[], targetPaths: string[]): TestRecommendation[] {
+  const tests = files.filter((file) => file.isTest && !file.isGenerated);
   const terms = new Set<string>();
   for (const targetPath of targetPaths) {
     for (const token of pathTokens(targetPath)) terms.add(token);
@@ -121,7 +153,7 @@ export function recommendTests(
         (targetPaths.some((path) => directTestName(path, test.path)) ? 40 : 0);
       return {
         path: test.path,
-        command: testCommand(test.path, frameworks),
+        command: testCommand(test.path),
         reason: directReason(matches, targetPaths, test.path),
         score,
       };
@@ -142,7 +174,10 @@ export function broaderTestCommands(
   packageScripts: string[] = [],
 ): string[] {
   const commands = new Set<string>();
-  const filter = pascalish(taskOrPath)
+  const subject = taskOrPath.includes("/")
+    ? (taskOrPath.split("/").at(-1) ?? taskOrPath).replace(/\.[^.]+$/, "")
+    : taskOrPath;
+  const filter = pascalish(subject)
     .split(/(?=[A-Z])/)
     .slice(0, 3)
     .join("");
@@ -158,8 +193,8 @@ export function broaderTestCommands(
   return [...commands];
 }
 
-function testCommand(path: string, frameworks: Framework[]): string {
-  if (path.endsWith(".php") || frameworks.includes("laravel")) return `php artisan test ${path}`;
+function testCommand(path: string): string {
+  if (path.endsWith(".php")) return `php artisan test ${path}`;
   return `bun test ${path}`;
 }
 
@@ -190,7 +225,10 @@ function pathTokens(path: string): string[] {
     .split(/[/._-]+|(?=[A-Z])/)
     .map((token) => token.toLowerCase())
     .filter(
-      (token) => token.length > 2 && !["app", "tests", "feature", "unit", "src"].includes(token),
+      (token) =>
+        token.length > 2 &&
+        !stopWords.has(token) &&
+        !["test", "tests", "feature", "unit", "src"].includes(token),
     );
 }
 
