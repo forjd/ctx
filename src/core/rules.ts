@@ -1,0 +1,68 @@
+import { existsSync } from "node:fs";
+import { readdir, readFile } from "node:fs/promises";
+import { join } from "node:path";
+import type { ProjectInfo, Rule } from "../types";
+
+export async function inferRules(root: string, project: ProjectInfo): Promise<Rule[]> {
+  const rules: Rule[] = [];
+  const add = (text: string, source: string, confidence: Rule["confidence"] = "medium") => {
+    if (!rules.some((rule) => rule.text === text)) rules.push({ text, source, confidence });
+  };
+
+  if (project.frameworks.includes("pest")) add("Use Pest for PHP tests.", "pest.php", "high");
+  if (project.frameworks.includes("laravel")) {
+    add("Use Laravel migrations for schema changes.", "composer.json", "high");
+    add("Run php artisan test for backend changes.", "composer.json", "medium");
+    add("Use Laravel jobs for queued work.", "app/Jobs", "medium");
+    add("Use notifications for user-facing reminders.", "app/Notifications", "medium");
+  }
+  if (project.frameworks.includes("vue"))
+    add("Use Vue components under resources/js or src/components.", "package.json", "high");
+  if (project.frameworks.includes("typescript"))
+    add(
+      "Respect the TypeScript configuration before changing typed code.",
+      "tsconfig.json",
+      "medium",
+    );
+  add("Do not edit generated files or dependency directories.", "ctx", "high");
+
+  await addDocumentRules(root, add);
+  return rules;
+}
+
+async function addDocumentRules(
+  root: string,
+  add: (text: string, source: string, confidence?: Rule["confidence"]) => void,
+): Promise<void> {
+  const docs = [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "README.md",
+    "pint.json",
+    "eslint.config.js",
+    "eslint.config.ts",
+    "phpunit.xml",
+  ];
+  for (const doc of docs) {
+    const path = join(root, doc);
+    if (!existsSync(path)) continue;
+    const raw = await readFile(path, "utf8").catch(() => "");
+    const lower = raw.toLowerCase();
+    if (lower.includes("conventional commit"))
+      add("Use Conventional Commits for commit messages.", doc, "medium");
+    if (lower.includes("pest")) add("Use Pest for PHP tests.", doc, "medium");
+    if (lower.includes("pint")) add("Use Laravel Pint formatting for PHP code.", doc, "medium");
+  }
+  const cursorRules = join(root, ".cursor/rules");
+  if (existsSync(cursorRules)) {
+    const entries = await readdir(cursorRules).catch(() => []);
+    for (const entry of entries)
+      add(
+        `Review .cursor/rules/${entry} before related edits.`,
+        `.cursor/rules/${entry}`,
+        "medium",
+      );
+  }
+  const docsDir = join(root, "docs");
+  if (existsSync(docsDir)) add("Review docs/ for domain-specific project guidance.", "docs", "low");
+}
