@@ -173,6 +173,12 @@ fix: improve Laravel test discovery
 chore: update tooling
 ```
 
+## Releases
+
+Release PRs are managed by Release Please on pushes to `main`.
+
+It uses Conventional Commits to update `package.json`, maintain `CHANGELOG.md`, tag the release, and create the GitHub release when the release PR is merged. The workflow can run with the default `GITHUB_TOKEN`; configure a `RELEASE_PLEASE_TOKEN` repository secret if Release Please PRs need to trigger other GitHub Actions workflows.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
