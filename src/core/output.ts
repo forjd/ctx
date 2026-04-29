@@ -1,4 +1,11 @@
-import type { ContextPack, DiffRiskReport, ProjectInfo, Rule, TestRecommendation } from "../types";
+import type {
+  ContextPack,
+  DiffRiskReport,
+  FileExplanation,
+  ProjectInfo,
+  Rule,
+  TestRecommendation,
+} from "../types";
 
 export function json(data: unknown): string {
   return `${JSON.stringify(data, null, 2)}\n`;
@@ -113,6 +120,43 @@ export function renderDiffRisk(report: DiffRiskReport): string {
       report.suggestedChecks.length
         ? report.suggestedChecks
         : ["Run the project's standard test suite."],
+    ),
+    "",
+  ].join("\n");
+}
+
+export function renderFileExplanation(report: FileExplanation): string {
+  return [
+    "# File Explanation",
+    "",
+    `Path: ${report.path}`,
+    `Category: ${report.category}`,
+    `Language: ${report.language}`,
+    `Test: ${report.isTest ? "yes" : "no"}`,
+    `Generated: ${report.isGenerated ? "yes" : "no"}`,
+    "",
+    "## Reasons",
+    ...bullets(report.reasons),
+    "",
+    "## Symbols",
+    ...bullets(
+      report.symbols.length
+        ? report.symbols.map((symbol) => `${symbol.kind} ${symbol.name}:${symbol.lineStart}`)
+        : ["No symbols extracted."],
+    ),
+    "",
+    "## Related tests",
+    ...bullets(
+      report.relatedTests.length
+        ? report.relatedTests.map((test) => `${test.path}\n  Command: ${test.command}`)
+        : ["No related tests found."],
+    ),
+    "",
+    "## Applicable rules",
+    ...bullets(
+      report.applicableRules.length
+        ? report.applicableRules.map((rule) => `${rule.text} (${rule.source})`)
+        : ["No specific rules matched."],
     ),
     "",
   ].join("\n");

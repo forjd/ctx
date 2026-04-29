@@ -108,3 +108,15 @@ export interface DiffRiskReport {
   concerns: string[];
   suggestedChecks: string[];
 }
+
+export interface FileExplanation {
+  path: string;
+  category: FileCategory;
+  language: string;
+  isTest: boolean;
+  isGenerated: boolean;
+  symbols: SymbolInfo[];
+  relatedTests: TestRecommendation[];
+  applicableRules: Rule[];
+  reasons: string[];
+}

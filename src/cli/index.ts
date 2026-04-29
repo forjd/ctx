@@ -7,6 +7,7 @@ import { testsForCommand } from "./commands/tests-for";
 import { diffRiskCommand } from "./commands/diff-risk";
 import { handoffCommand } from "./commands/handoff";
 import { rulesCommand } from "./commands/rules";
+import { explainCommand } from "./commands/explain";
 
 export interface CliArgs {
   command: string;
@@ -75,6 +76,9 @@ async function main(): Promise<void> {
     case "handoff":
       await handoffCommand(root, args);
       break;
+    case "explain":
+      await explainCommand(root, args);
+      break;
     case "help":
     default:
       printHelp();
@@ -92,6 +96,7 @@ Usage:
   ctx tests-for <file|--changed>
   ctx diff-risk [--json]
   ctx rules [--json]
+  ctx explain <file> [--json]
   ctx handoff [--stdout|--json]
 `);
 }

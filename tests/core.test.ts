@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
 import { buildContextPack } from "../src/core/context-pack";
 import { analyzeDiffRisk } from "../src/core/diff-risk";
+import { explainFile } from "../src/core/explain";
 import { renderContextPack } from "../src/core/output";
 import { detectProject } from "../src/core/project";
 import { inferRules } from "../src/core/rules";
@@ -120,5 +121,16 @@ describe("context pack behaviours", () => {
     expect(pack.files[0]).toHaveProperty("reason");
     expect(pack.tests[0]).toHaveProperty("command");
     expect(pack.project.frameworks).toContain("laravel");
+  });
+
+  test("explains an indexed file with symbols and related tests", async () => {
+    const files = await scanRepository(laravelFixture);
+    const project = await detectProject(laravelFixture);
+    const rules = await inferRules(laravelFixture, project);
+    const report = explainFile("app/Jobs/SendSourceOfFundsReminderJob.php", files, rules);
+    expect(report.category).toBe("job");
+    expect(report.symbols.map((symbol) => symbol.name)).toContain("SendSourceOfFundsReminderJob");
+    expect(report.relatedTests[0]?.path).toBe("tests/Feature/SourceOfFundsReminderTest.php");
+    expect(report.reasons.length).toBeGreaterThan(0);
   });
 });
