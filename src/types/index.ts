@@ -9,6 +9,7 @@ export type Framework =
   | "react-router"
   | "astro"
   | "rails"
+  | "django"
   | "vue"
   | "react"
   | "next"
@@ -66,6 +67,7 @@ export interface ProjectConfig {
     reactRouter: boolean;
     astro: boolean;
     rails: boolean;
+    django: boolean;
     vue: boolean;
     react: boolean;
     next: boolean;

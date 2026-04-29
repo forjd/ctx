@@ -11,6 +11,7 @@ import { categorizeFile, extractSymbols, scanRepository } from "../src/core/scan
 
 const root = process.cwd();
 const astroFixture = join(root, "tests/fixtures/astro-basic");
+const djangoFixture = join(root, "tests/fixtures/django-basic");
 const laravelFixture = join(root, "tests/fixtures/laravel-basic");
 const nestFixture = join(root, "tests/fixtures/nest-basic");
 const nodeHttpFixture = join(root, "tests/fixtures/node-http-basic");
@@ -75,6 +76,11 @@ describe("project detection", () => {
     expect(project.importantDirectories).toContain("app/models");
   });
 
+  test("detects Django from fixture", async () => {
+    const project = await detectProject(djangoFixture);
+    expect(project.frameworks).toContain("django");
+  });
+
   test("detects Nuxt from fixture", async () => {
     const project = await detectProject(nuxtFixture);
     expect(project.frameworks).toContain("nuxt");
@@ -108,6 +114,14 @@ describe("scanner", () => {
     expect(categorizeFile("db/migrate/20260429000000_create_accounts.rb")).toBe("migration");
     expect(categorizeFile("config/routes.rb")).toBe("route");
     expect(categorizeFile("spec/models/account_spec.rb")).toBe("test");
+    expect(categorizeFile("accounts/models.py")).toBe("model");
+    expect(categorizeFile("accounts/views.py")).toBe("controller");
+    expect(categorizeFile("accounts/serializers.py")).toBe("resource");
+    expect(categorizeFile("accounts/forms.py")).toBe("request");
+    expect(categorizeFile("demo/urls.py")).toBe("route");
+    expect(categorizeFile("demo/settings.py")).toBe("config");
+    expect(categorizeFile("accounts/migrations/0001_initial.py")).toBe("migration");
+    expect(categorizeFile("accounts/tests.py")).toBe("test");
     expect(categorizeFile("src/routes/accounts.ts")).toBe("api-route");
     expect(categorizeFile("src/middleware/requireAuth.ts")).toBe("middleware");
     expect(categorizeFile("src/schemas/accountSchema.ts")).toBe("schema");
@@ -154,6 +168,15 @@ describe("scanner", () => {
     const symbols = extractSymbols("app/models/account.rb", "class Account\n  def active?\n  end\nend\n");
     expect(symbols.map((symbol) => symbol.name)).toContain("Account");
     expect(symbols.map((symbol) => symbol.name)).toContain("active?");
+  });
+
+  test("extracts Python classes and functions", () => {
+    const symbols = extractSymbols(
+      "accounts/models.py",
+      "class Account:\n    def is_active(self):\n        return True\n",
+    );
+    expect(symbols.map((symbol) => symbol.name)).toContain("Account");
+    expect(symbols.map((symbol) => symbol.name)).toContain("is_active");
   });
 
   test("resolves local dependency edges", async () => {

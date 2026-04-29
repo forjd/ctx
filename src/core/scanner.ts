@@ -110,6 +110,7 @@ export function categorizeFile(path: string): FileCategory {
   if (path.startsWith("app/controllers/")) return "controller";
   if (path.startsWith("app/Http/Requests/")) return "request";
   if (path.startsWith("app/Http/Resources/")) return "resource";
+  if (path.endsWith("/serializers.py")) return "resource";
   if (path.startsWith("app/Services/")) return "service";
   if (path.startsWith("app/Actions/")) return "action";
   if (path.startsWith("app/Jobs/")) return "job";
@@ -118,14 +119,21 @@ export function categorizeFile(path: string): FileCategory {
   if (path.startsWith("app/Enums/")) return "enum";
   if (path.startsWith("database/migrations/")) return "migration";
   if (path.startsWith("db/migrate/")) return "migration";
+  if (path.includes("/migrations/") && path.endsWith(".py")) return "migration";
   if (path.startsWith("database/factories/")) return "factory";
   if (path.startsWith("spec/factories/")) return "factory";
   if (path.startsWith("tests/Feature/")) return "feature-test";
   if (path.startsWith("tests/Unit/")) return "unit-test";
   if (path.startsWith("spec/")) return "test";
   if (path.startsWith("test/")) return "test";
+  if (path.endsWith("/tests.py") || /(^|\/)test_[^/]+\.py$/.test(path)) return "test";
   if (path.startsWith("routes/")) return "route";
   if (path === "config/routes.rb") return "route";
+  if (path.endsWith("/urls.py")) return "route";
+  if (path.endsWith("/models.py")) return "model";
+  if (path.endsWith("/views.py")) return "controller";
+  if (path.endsWith("/forms.py")) return "request";
+  if (path.endsWith("/settings.py")) return "config";
   if (path.startsWith("src/routes/") && !/\/\+(page|layout)\.(svelte|vue|ts|js)$/.test(path))
     return "api-route";
   if (path.startsWith("src/controllers/")) return "controller";
@@ -168,6 +176,7 @@ export function categorizeFile(path: string): FileCategory {
 export function extractSymbols(path: string, content: string): SymbolInfo[] {
   if (path.endsWith(".php")) return extractPhpSymbols(content);
   if (path.endsWith(".rb")) return extractRubySymbols(content);
+  if (path.endsWith(".py")) return extractPythonSymbols(content);
   if (/\.(ts|tsx|js|jsx|vue|svelte|astro)$/.test(path)) return extractTypeScriptSymbols(content);
   return [];
 }
@@ -195,6 +204,19 @@ function extractRubySymbols(content: string): SymbolInfo[] {
   const symbols: SymbolInfo[] = [];
   const lines = content.split("\n");
   const pattern = /^\s*(class|module|def)\s+([A-Za-z_][A-Za-z0-9_:!?=]*)/;
+  lines.forEach((line, index) => {
+    const match = line.match(pattern);
+    if (match?.[1] && match[2]) {
+      symbols.push({ kind: match[1], name: match[2], lineStart: index + 1 });
+    }
+  });
+  return symbols;
+}
+
+function extractPythonSymbols(content: string): SymbolInfo[] {
+  const symbols: SymbolInfo[] = [];
+  const lines = content.split("\n");
+  const pattern = /^\s*(class|def)\s+([A-Za-z_][A-Za-z0-9_]*)/;
   lines.forEach((line, index) => {
     const match = line.match(pattern);
     if (match?.[1] && match[2]) {
@@ -310,6 +332,7 @@ function symbolKind(pattern: RegExp): string {
 function languageFor(extension: string, path: string): string {
   if (extension === ".php") return "php";
   if (extension === ".rb") return "ruby";
+  if (extension === ".py") return "python";
   if (extension === ".vue") return "vue";
   if (extension === ".svelte") return "svelte";
   if (extension === ".astro") return "astro";
@@ -325,6 +348,8 @@ function isTestPath(path: string): boolean {
     path.startsWith("tests/") ||
     path.startsWith("spec/") ||
     /^test\/.*_test\.rb$/.test(path) ||
+    path.endsWith("/tests.py") ||
+    /(^|\/)test_[^/]+\.py$/.test(path) ||
     /\.(test|spec)\.(ts|tsx|js|jsx)$/.test(path) ||
     path.endsWith("Test.php")
   );

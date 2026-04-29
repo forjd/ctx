@@ -44,6 +44,10 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
     add("Use Rails migrations for schema changes.", "Gemfile", "high");
     add("Run Rails or RSpec tests for backend changes.", "Gemfile", "medium");
   }
+  if (project.frameworks.includes("django")) {
+    add("Use Django migrations for model schema changes.", "manage.py", "high");
+    add("Run python manage.py test for Django changes.", "manage.py", "medium");
+  }
   if (project.frameworks.includes("vue"))
     add("Use Vue components under resources/js or src/components.", "package.json", "high");
   if (project.frameworks.includes("react"))
