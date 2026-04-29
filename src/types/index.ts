@@ -1,5 +1,6 @@
 export type Framework =
   | "laravel"
+  | "symfony"
   | "node"
   | "express"
   | "fastify"
@@ -58,6 +59,7 @@ export interface ProjectConfig {
   ignoredDirectories: string[];
   frameworks: {
     laravel: boolean;
+    symfony: boolean;
     node: boolean;
     express: boolean;
     fastify: boolean;

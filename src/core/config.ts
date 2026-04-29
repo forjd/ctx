@@ -25,6 +25,7 @@ export function defaultConfig(): ProjectConfig {
     ignoredDirectories: defaultIgnoredDirectories,
     frameworks: {
       laravel: true,
+      symfony: true,
       node: true,
       express: true,
       fastify: true,

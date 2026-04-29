@@ -32,6 +32,15 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
     frameworks.add("laravel");
   }
 
+  if (
+    existsSync(join(root, "bin/console")) ||
+    existsSync(join(root, "config/packages")) ||
+    existsSync(join(root, "src/Controller")) ||
+    (await fileContains(composer, "symfony/framework-bundle"))
+  ) {
+    frameworks.add("symfony");
+  }
+
   if (existsSync(packageJson)) frameworks.add("node");
   if (packageHas(packageRaw, "express")) frameworks.add("express");
   if (packageHas(packageRaw, "fastify")) frameworks.add("fastify");
@@ -148,8 +157,10 @@ function detectPackageManager(root: string): ProjectInfo["packageManager"] {
 function importantDirectories(root: string): string[] {
   return [
     "app/Models",
+    "src/Entity",
     "app/models",
     "app/Http/Controllers",
+    "src/Controller",
     "app/controllers",
     "app/Services",
     "app/Jobs",
@@ -170,6 +181,7 @@ function importantDirectories(root: string): string[] {
 function conventions(frameworks: Framework[]): string[] {
   const rules: string[] = [];
   if (frameworks.includes("pest")) rules.push("Uses Pest tests");
+  if (frameworks.includes("symfony")) rules.push("Uses Symfony application conventions");
   if (frameworks.includes("vue")) rules.push("Uses Vue frontend");
   if (frameworks.includes("react")) rules.push("Uses React frontend");
   if (frameworks.includes("next")) rules.push("Uses Next.js routing");

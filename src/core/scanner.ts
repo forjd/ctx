@@ -105,19 +105,23 @@ function toRelative(root: string, path: string): string {
 
 export function categorizeFile(path: string): FileCategory {
   if (path.startsWith("app/Models/")) return "model";
+  if (path.startsWith("src/Entity/")) return "model";
   if (path.startsWith("app/models/")) return "model";
   if (path.startsWith("app/Http/Controllers/")) return "controller";
+  if (path.startsWith("src/Controller/")) return "controller";
   if (path.startsWith("app/controllers/")) return "controller";
   if (path.startsWith("app/Http/Requests/")) return "request";
   if (path.startsWith("app/Http/Resources/")) return "resource";
   if (path.endsWith("/serializers.py")) return "resource";
   if (path.startsWith("app/Services/")) return "service";
+  if (path.startsWith("src/Service/")) return "service";
   if (path.startsWith("app/Actions/")) return "action";
   if (path.startsWith("app/Jobs/")) return "job";
   if (path.startsWith("app/Notifications/")) return "notification";
   if (path.startsWith("app/Policies/")) return "policy";
   if (path.startsWith("app/Enums/")) return "enum";
   if (path.startsWith("database/migrations/")) return "migration";
+  if (path.startsWith("migrations/") && path.endsWith(".php")) return "migration";
   if (path.startsWith("db/migrate/")) return "migration";
   if (path.includes("/migrations/") && path.endsWith(".py")) return "migration";
   if (path.startsWith("database/factories/")) return "factory";

@@ -16,6 +16,14 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
     add("Use Laravel jobs for queued work.", "app/Jobs", "medium");
     add("Use notifications for user-facing reminders.", "app/Notifications", "medium");
   }
+  if (project.frameworks.includes("symfony")) {
+    add(
+      "Use Symfony console, controller, service, and entity conventions.",
+      "composer.json",
+      "high",
+    );
+    add("Run php bin/phpunit for Symfony changes.", "composer.json", "medium");
+  }
   if (
     project.frameworks.includes("express") ||
     project.frameworks.includes("fastify") ||

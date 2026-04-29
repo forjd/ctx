@@ -13,6 +13,7 @@ const root = process.cwd();
 const astroFixture = join(root, "tests/fixtures/astro-basic");
 const djangoFixture = join(root, "tests/fixtures/django-basic");
 const laravelFixture = join(root, "tests/fixtures/laravel-basic");
+const symfonyFixture = join(root, "tests/fixtures/symfony-basic");
 const nestFixture = join(root, "tests/fixtures/nest-basic");
 const nodeHttpFixture = join(root, "tests/fixtures/node-http-basic");
 const vueFixture = join(root, "tests/fixtures/node-vue-basic");
@@ -27,6 +28,12 @@ describe("project detection", () => {
     const project = await detectProject(laravelFixture);
     expect(project.frameworks).toContain("laravel");
     expect(project.frameworks).toContain("pest");
+  });
+
+  test("detects Symfony from fixture", async () => {
+    const project = await detectProject(symfonyFixture);
+    expect(project.frameworks).toContain("symfony");
+    expect(project.importantDirectories).toContain("src/Entity");
   });
 
   test("detects Vue from fixture", async () => {
@@ -107,10 +114,14 @@ describe("scanner", () => {
 
   test("categorises Laravel files", () => {
     expect(categorizeFile("app/Models/User.php")).toBe("model");
+    expect(categorizeFile("src/Entity/Account.php")).toBe("model");
     expect(categorizeFile("app/models/account.rb")).toBe("model");
     expect(categorizeFile("app/Jobs/SendEmail.php")).toBe("job");
     expect(categorizeFile("app/controllers/accounts_controller.rb")).toBe("controller");
+    expect(categorizeFile("src/Controller/AccountController.php")).toBe("controller");
+    expect(categorizeFile("src/Service/AccountExporter.php")).toBe("service");
     expect(categorizeFile("database/migrations/create_users.php")).toBe("migration");
+    expect(categorizeFile("migrations/Version20260429000000.php")).toBe("migration");
     expect(categorizeFile("db/migrate/20260429000000_create_accounts.rb")).toBe("migration");
     expect(categorizeFile("config/routes.rb")).toBe("route");
     expect(categorizeFile("spec/models/account_spec.rb")).toBe("test");

@@ -224,6 +224,7 @@ export function broaderTestCommands(
     .join("");
   if (frameworks.includes("laravel"))
     commands.add(filter ? `php artisan test --filter=${filter}` : "php artisan test");
+  if (frameworks.includes("symfony")) commands.add("php bin/phpunit");
   if (frameworks.includes("rails")) commands.add("bin/rails test");
   if (frameworks.includes("django")) commands.add("python manage.py test");
   if (packageScripts.includes("test")) commands.add("bun test");
