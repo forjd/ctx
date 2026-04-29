@@ -1,6 +1,6 @@
 # ctx-context-pack
 
-Use this skill when an agent needs repository context before making code changes, especially in Laravel, Vue, TypeScript, JavaScript, PHP, or general Git repositories.
+Use this skill when an agent needs repository context before making code changes in a supported application or general Git repository.
 
 The goal is to call `ctx` as a local context engine, not to replace normal code reading or testing.
 
@@ -9,19 +9,19 @@ The goal is to call `ctx` as a local context engine, not to replace normal code 
 Use this skill when:
 
 - starting work in an unfamiliar repository
-- preparing to edit a Laravel/Vue app
-- a task may touch tests, migrations, jobs, notifications, policies, requests, frontend pages, or Git history
+- preparing to edit a Laravel, Symfony, WordPress, Drupal, Rails, Django, FastAPI, Flask, Go, Vue, React, Next.js, Nuxt, SvelteKit, Node, NestJS, Remix, React Router, Astro, TypeScript, JavaScript, PHP, or general Git repository
+- a task may touch tests, migrations, jobs, notifications, policies, requests, controllers, routes, frontend pages, services, config, or Git history
 - a handoff summary is needed after an agent run
-- the user asks for a context pack, repo map, test recommendations, diff risk, or handoff
+- the user asks for a context pack, repo map, project rules, file explanation, test recommendations, stale index check, diff risk, or handoff
 
 Do not use this skill for tiny single-file edits where the relevant context is already obvious.
 
 ## Command Setup
 
-From the target repository, call the `ctx` checkout directly:
+From the target repository, use the published Bun CLI:
 
 ```bash
-bun run /path/to/ctx/src/cli/index.ts --help
+bunx @forjd/ctx --help
 ```
 
 If `ctx` is installed on PATH, use:
@@ -30,34 +30,48 @@ If `ctx` is installed on PATH, use:
 ctx --help
 ```
 
+From a local source checkout, use:
+
+```bash
+bun run /path/to/ctx/src/cli/index.ts --help
+```
+
 ## Standard Workflow
 
 Run these from the target repository:
 
 ```bash
-bun run /path/to/ctx/src/cli/index.ts init
-bun run /path/to/ctx/src/cli/index.ts index
-bun run /path/to/ctx/src/cli/index.ts map
-bun run /path/to/ctx/src/cli/index.ts pack "describe the coding task"
+ctx init
+ctx index
+ctx stale
+ctx map
+ctx pack "describe the coding task"
 ```
 
 For machine-readable output:
 
 ```bash
-bun run /path/to/ctx/src/cli/index.ts pack "describe the coding task" --json
+ctx pack "describe the coding task" --json
+```
+
+For focused inspection:
+
+```bash
+ctx rules
+ctx explain path/to/file.ext
 ```
 
 Before or after changes:
 
 ```bash
-bun run /path/to/ctx/src/cli/index.ts tests-for --changed
-bun run /path/to/ctx/src/cli/index.ts diff-risk
+ctx tests-for --changed
+ctx diff-risk
 ```
 
 At handoff:
 
 ```bash
-bun run /path/to/ctx/src/cli/index.ts handoff
+ctx handoff
 ```
 
 ## How To Use The Pack
@@ -83,7 +97,7 @@ Rerun `ctx index` after:
 
 ## Cleanup
 
-`ctx init`, `ctx index`, `ctx pack`, and `ctx handoff` create `.ctx/` in the target repository.
+Commands that use the index may create `.ctx/` in the target repository. This includes `ctx init`, `ctx index`, `ctx pack`, `ctx tests-for`, `ctx rules`, `ctx stale`, and `ctx handoff`.
 
 If the user only asked for a smoke test against another repo, remove `.ctx/` afterward unless they want to keep the index:
 
