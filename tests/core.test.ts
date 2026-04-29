@@ -49,6 +49,7 @@ describe("scanner", () => {
     expect(categorizeFile("app/Jobs/SendEmail.php")).toBe("job");
     expect(categorizeFile("database/migrations/create_users.php")).toBe("migration");
     expect(categorizeFile("resources/js/Pages/Dashboard.vue")).toBe("frontend-page");
+    expect(categorizeFile("app/page.tsx")).toBe("frontend-page");
     expect(categorizeFile("app/account/page.tsx")).toBe("frontend-page");
     expect(categorizeFile("app/api/accounts/route.ts")).toBe("api-route");
     expect(categorizeFile("src/hooks/useAccount.ts")).toBe("frontend-hook");

@@ -121,7 +121,7 @@ export function categorizeFile(path: string): FileCategory {
   if (path.startsWith("routes/")) return "route";
   if (path.startsWith("config/")) return "config";
   if (/^(app|src\/app)\/api\/.+\/route\.(ts|tsx|js|jsx)$/.test(path)) return "api-route";
-  if (/^(app|src\/app)\/.+(page|layout)\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
+  if (/^(app|src\/app)\/(.*\/)?(page|layout)\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
   if (/^(pages|src\/pages)\/.+\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
   if (path.startsWith("resources/js/Pages/")) return "frontend-page";
   if (path.startsWith("resources/js/Components/") || path.startsWith("src/components/"))
