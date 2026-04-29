@@ -29,6 +29,7 @@ export async function packCommand(root: string, args: CliArgs): Promise<void> {
     files,
     rules,
     config.scoring,
+    packOptions(args),
   );
   const markdown = renderContextPack(pack, history);
   const output = args.flags.has("json") ? json(pack) : markdown;
@@ -47,6 +48,33 @@ export async function packCommand(root: string, args: CliArgs): Promise<void> {
   );
   db.close();
   if (outputPath == null) await savePack(root, id, markdown);
+}
+
+function packOptions(args: CliArgs) {
+  const explicitLimit = Number(args.values.get("files") ?? 0);
+  const fileLimit = Number.isFinite(explicitLimit) && explicitLimit > 0 ? explicitLimit : undefined;
+  if (args.flags.has("small")) {
+    return {
+      fileLimit: fileLimit ?? 6,
+      testLimit: 4,
+      ruleLimit: 5,
+      edgeLimit: 12,
+      includeSymbols: args.flags.has("include-symbols"),
+    };
+  }
+  if (args.flags.has("full")) {
+    return {
+      fileLimit: fileLimit ?? 24,
+      testLimit: 16,
+      ruleLimit: 16,
+      edgeLimit: 48,
+      includeSymbols: true,
+    };
+  }
+  return {
+    fileLimit: fileLimit ?? 12,
+    includeSymbols: args.flags.has("include-symbols"),
+  };
 }
 
 function slug(value: string): string {

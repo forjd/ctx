@@ -74,6 +74,8 @@ export function rankFiles(
   files: IndexedFile[],
   task: string,
   config?: Partial<ScoringConfig>,
+  limit = 12,
+  includeSymbols = false,
 ): RankedFile[] {
   const terms = taskTerms(task, config);
   const boosts = { ...categoryBoosts, ...(config?.categoryBoosts ?? {}) };
@@ -139,11 +141,12 @@ export function rankFiles(
         score,
         category: file.category,
         reason: reasons.filter(Boolean).join("; ") || `category ${file.category} may be relevant`,
+        symbols: includeSymbols ? file.symbols : undefined,
       };
     })
     .filter((file) => file.score > 0)
     .sort((a, b) => b.score - a.score || a.path.localeCompare(b.path))
-    .slice(0, 12);
+    .slice(0, limit);
 }
 
 export function recommendTests(files: IndexedFile[], targetPaths: string[]): TestRecommendation[] {

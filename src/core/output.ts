@@ -71,7 +71,19 @@ export function renderContextPack(pack: ContextPack, history: string[] = []): st
     "",
     "## Relevant files",
     "",
-    ...pack.files.flatMap((file) => [`### ${file.path}`, "", `Reason: ${file.reason}`, ""]),
+    ...pack.files.flatMap((file) => [
+      `### ${file.path}`,
+      "",
+      `Reason: ${file.reason}`,
+      ...(file.symbols?.length
+        ? [
+            "",
+            "Symbols:",
+            ...bullets(file.symbols.map((symbol) => `${symbol.kind} ${symbol.name}`)),
+          ]
+        : []),
+      "",
+    ]),
     "## Relevant tests",
     "",
     ...bullets(

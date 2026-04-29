@@ -155,10 +155,14 @@ describe("context pack behaviours", () => {
       project,
       files,
       rules,
+      undefined,
+      { fileLimit: 3, includeSymbols: true },
     );
     expect(pack.task).toBe("add expiry reminders for source-of-funds requests");
     expect(Array.isArray(pack.files)).toBe(true);
+    expect(pack.files).toHaveLength(3);
     expect(pack.files[0]).toHaveProperty("reason");
+    expect(pack.files[0]?.symbols?.length).toBeGreaterThan(0);
     expect(pack.tests[0]).toHaveProperty("command");
     expect(pack.dependencyEdges[0]).toHaveProperty("from");
     expect(pack.project.frameworks).toContain("laravel");

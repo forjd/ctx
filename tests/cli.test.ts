@@ -79,6 +79,30 @@ describe("cli commands", () => {
     expect(payload.frameworks).toContain("next");
     expect(payload.frameworks).toContain("react");
   });
+
+  test("pack modes are honored by the real CLI", async () => {
+    const fixture = await copyFixture("laravel-basic");
+    const small = runCli(fixture, [
+      "pack",
+      "add expiry reminders for source-of-funds requests",
+      "--json",
+      "--small",
+      "--include-symbols",
+    ]);
+    expect(small.exitCode).toBe(0);
+    const payload = JSON.parse(small.stdout);
+    expect(payload.files.length).toBeLessThanOrEqual(6);
+    expect(payload.files[0].symbols.length).toBeGreaterThan(0);
+
+    const limited = runCli(fixture, [
+      "pack",
+      "add expiry reminders for source-of-funds requests",
+      "--json",
+      "--files",
+      "2",
+    ]);
+    expect(JSON.parse(limited.stdout).files).toHaveLength(2);
+  });
 });
 
 async function copyFixture(name: string): Promise<string> {

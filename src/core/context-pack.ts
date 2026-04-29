@@ -11,6 +11,22 @@ import type {
 import { gitHistoryForTerms } from "./git";
 import { broaderTestCommands, rankFiles, recommendTests, taskTerms } from "./scorer";
 
+export interface ContextPackOptions {
+  fileLimit: number;
+  testLimit: number;
+  ruleLimit: number;
+  edgeLimit: number;
+  includeSymbols: boolean;
+}
+
+const defaultPackOptions: ContextPackOptions = {
+  fileLimit: 12,
+  testLimit: 8,
+  ruleLimit: 8,
+  edgeLimit: 24,
+  includeSymbols: false,
+};
+
 export async function buildContextPack(
   root: string,
   task: string,
@@ -18,10 +34,12 @@ export async function buildContextPack(
   files: IndexedFile[],
   rules: Rule[],
   scoring?: Partial<ScoringConfig>,
+  options: Partial<ContextPackOptions> = {},
 ): Promise<{ pack: ContextPack; history: string[] }> {
-  const ranked = rankFiles(files, task, scoring);
+  const packOptions = { ...defaultPackOptions, ...options };
+  const ranked = rankFiles(files, task, scoring, packOptions.fileLimit, packOptions.includeSymbols);
   const targetPaths = ranked.map((file) => file.path);
-  const tests = recommendTests(files, targetPaths);
+  const tests = recommendTests(files, targetPaths).slice(0, packOptions.testLimit);
   const history = await gitHistoryForTerms(root, taskTerms(task, scoring).slice(0, 6));
   const suggestedCommands = [
     ...tests.slice(0, 3).map((test) => test.command),
@@ -37,12 +55,12 @@ export async function buildContextPack(
     },
     files: ranked,
     tests,
-    rules: rules.slice(0, 8),
+    rules: rules.slice(0, packOptions.ruleLimit),
     risks: riskNotes(
       task,
       ranked.map((file) => file.category),
     ),
-    dependencyEdges: dependencyEdges(files, targetPaths),
+    dependencyEdges: dependencyEdges(files, targetPaths).slice(0, packOptions.edgeLimit),
     suggestedCommands,
     nextActions: [
       "Inspect the highest ranked files before editing.",

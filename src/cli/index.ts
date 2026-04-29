@@ -34,7 +34,7 @@ function parse(argv: string[]): CliArgs {
       } else if (
         rest[index + 1] &&
         !rest[index + 1]?.startsWith("--") &&
-        ["output"].includes(name)
+        ["output", "files"].includes(name)
       ) {
         values.set(name, rest[index + 1] ?? "");
         index += 1;
@@ -96,7 +96,7 @@ Usage:
   ctx init
   ctx index
   ctx map [--json]
-  ctx pack <task> [--json|--markdown] [--output path]
+  ctx pack <task> [--json|--markdown] [--small|--full] [--files n] [--include-symbols] [--output path]
   ctx tests-for <file|--changed>
   ctx diff-risk [--json]
   ctx rules [--json]

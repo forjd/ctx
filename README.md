@@ -103,6 +103,9 @@ Useful options:
 ```bash
 ctx pack "task" --json
 ctx pack "task" --markdown
+ctx pack "task" --small
+ctx pack "task" --full --include-symbols
+ctx pack "task" --files 20
 ctx pack "task" --output .ctx/packs/my-task.md
 ctx handoff --stdout
 ```

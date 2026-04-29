@@ -85,6 +85,7 @@ export interface RankedFile {
   score: number;
   category: FileCategory;
   reason: string;
+  symbols?: SymbolInfo[];
 }
 
 export interface TestRecommendation {
