@@ -1,4 +1,10 @@
-import type { Framework, IndexedFile, RankedFile, TestRecommendation } from "../types";
+import type {
+  Framework,
+  IndexedFile,
+  RankedFile,
+  ScoringConfig,
+  TestRecommendation,
+} from "../types";
 
 const synonymMap: Record<string, string[]> = {
   "source-of-funds": ["source of funds", "source_of_funds", "sourcefunds", "sourceoffunds", "sof"],
@@ -48,23 +54,29 @@ const stopWords = new Set([
   "with",
 ]);
 
-export function taskTerms(task: string): string[] {
+export function taskTerms(task: string, config?: Partial<ScoringConfig>): string[] {
   const raw = task
     .toLowerCase()
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .split(/[^a-z0-9_-]+/)
     .filter((term) => term.length > 2 && !stopWords.has(term));
   const expanded = new Set(raw);
+  const synonyms = { ...synonymMap, ...(config?.synonyms ?? {}) };
   for (const term of raw) {
     expanded.add(term.replace(/[-_]/g, ""));
     expanded.add(term.replace(/[-_]/g, " "));
-    for (const synonym of synonymMap[term] ?? []) expanded.add(synonym);
+    for (const synonym of synonyms[term] ?? []) expanded.add(synonym);
   }
   return [...expanded].filter(Boolean);
 }
 
-export function rankFiles(files: IndexedFile[], task: string): RankedFile[] {
-  const terms = taskTerms(task);
+export function rankFiles(
+  files: IndexedFile[],
+  task: string,
+  config?: Partial<ScoringConfig>,
+): RankedFile[] {
+  const terms = taskTerms(task, config);
+  const boosts = { ...categoryBoosts, ...(config?.categoryBoosts ?? {}) };
   const testDomainTerms = terms.filter(
     (term) => !["add", "update", "fix", "the", "for"].includes(term),
   );
@@ -104,7 +116,7 @@ export function rankFiles(files: IndexedFile[], task: string): RankedFile[] {
         reasons.push(`filename/domain terms suggest ${joinShort(contentTerms)}`);
       }
 
-      for (const [term, categories] of Object.entries(categoryBoosts)) {
+      for (const [term, categories] of Object.entries(boosts)) {
         if (terms.includes(term) && categories.includes(file.category)) {
           score += 12;
           reasons.push(`${file.category} is relevant to ${term} work`);
@@ -168,6 +180,7 @@ export function broaderTestCommands(
   taskOrPath: string,
   frameworks: Framework[],
   packageScripts: string[] = [],
+  config?: Partial<ScoringConfig>,
 ): string[] {
   const commands = new Set<string>();
   const subject = taskOrPath.includes("/")
@@ -186,6 +199,7 @@ export function broaderTestCommands(
     frameworks.includes("typescript")
   )
     commands.add("bun test");
+  for (const command of config?.broaderTestCommands ?? []) commands.add(command);
   return [...commands];
 }
 

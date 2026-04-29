@@ -1,4 +1,5 @@
 import type { CliArgs } from "../index";
+import { readConfig } from "../../core/config";
 import { openDatabase, readIndexedFiles } from "../../core/db";
 import { changedFiles } from "../../core/git";
 import { json, renderTests } from "../../core/output";
@@ -9,6 +10,7 @@ import { warnIfStale } from "../../core/stale";
 
 export async function testsForCommand(root: string, args: CliArgs): Promise<void> {
   const project = await detectProject(root);
+  const config = await readConfig(root);
   const db = await openDatabase(root);
   let files = readIndexedFiles(db);
   await warnIfStale(root, db, files);
@@ -19,7 +21,7 @@ export async function testsForCommand(root: string, args: CliArgs): Promise<void
   if (targets.length === 0) throw new Error("Usage: ctx tests-for <file|--changed>");
 
   const direct = recommendTests(files, targets);
-  const broader = broaderTestCommands(targets.join(" "), project.frameworks);
+  const broader = broaderTestCommands(targets.join(" "), project.frameworks, [], config.scoring);
   const reasoning = direct.length
     ? direct.map((test) => `${test.path}: ${test.reason}`)
     : ["No direct test matches found; use broader commands."];

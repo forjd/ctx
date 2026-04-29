@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -44,6 +44,31 @@ describe("cli commands", () => {
     const payload = JSON.parse(fresh.stdout);
     expect(payload.isStale).toBe(false);
     expect(typeof payload.indexedAt).toBe("string");
+  });
+
+  test("pack uses configured scoring from the real CLI", async () => {
+    const fixture = await copyFixture("laravel-basic");
+    await mkdir(join(fixture, ".ctx"), { recursive: true });
+    await writeFile(
+      join(fixture, ".ctx/config.json"),
+      `${JSON.stringify(
+        {
+          scoring: {
+            synonyms: { aml: ["source-of-funds"] },
+            categoryBoosts: { aml: ["model"] },
+            broaderTestCommands: ["bun run custom:test"],
+          },
+        },
+        null,
+        2,
+      )}\n`,
+    );
+
+    const result = runCli(fixture, ["pack", "review aml cases", "--json"]);
+    expect(result.exitCode).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.files[0].path).toContain("SourceOfFunds");
+    expect(payload.suggestedCommands).toContain("bun run custom:test");
   });
 });
 

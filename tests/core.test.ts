@@ -84,6 +84,19 @@ describe("context pack behaviours", () => {
     ).toBeGreaterThan(0);
   });
 
+  test("uses configured synonyms and category boosts", async () => {
+    const files = await scanRepository(laravelFixture);
+    const ranked = rankFiles(files, "review aml cases", {
+      synonyms: { aml: ["source-of-funds"] },
+      categoryBoosts: { aml: ["model"] },
+      broaderTestCommands: [],
+    });
+    expect(ranked[0]?.path).toContain("SourceOfFunds");
+    expect(ranked.find((file) => file.category === "model")?.reason).toContain(
+      "model is relevant to aml work",
+    );
+  });
+
   test("tests-for finds direct filename matches", async () => {
     const files = await scanRepository(laravelFixture);
     const tests = recommendTests(files, ["app/Jobs/SendSourceOfFundsReminderJob.php"]);

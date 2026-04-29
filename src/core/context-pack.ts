@@ -1,6 +1,13 @@
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { ContextPack, DependencyEdge, IndexedFile, ProjectInfo, Rule } from "../types";
+import type {
+  ContextPack,
+  DependencyEdge,
+  IndexedFile,
+  ProjectInfo,
+  Rule,
+  ScoringConfig,
+} from "../types";
 import { gitHistoryForTerms } from "./git";
 import { broaderTestCommands, rankFiles, recommendTests, taskTerms } from "./scorer";
 
@@ -10,14 +17,15 @@ export async function buildContextPack(
   project: ProjectInfo,
   files: IndexedFile[],
   rules: Rule[],
+  scoring?: Partial<ScoringConfig>,
 ): Promise<{ pack: ContextPack; history: string[] }> {
-  const ranked = rankFiles(files, task);
+  const ranked = rankFiles(files, task, scoring);
   const targetPaths = ranked.map((file) => file.path);
   const tests = recommendTests(files, targetPaths);
-  const history = await gitHistoryForTerms(root, taskTerms(task).slice(0, 6));
+  const history = await gitHistoryForTerms(root, taskTerms(task, scoring).slice(0, 6));
   const suggestedCommands = [
     ...tests.slice(0, 3).map((test) => test.command),
-    ...broaderTestCommands(task, project.frameworks),
+    ...broaderTestCommands(task, project.frameworks, [], scoring),
   ].filter((value, index, values) => values.indexOf(value) === index);
 
   const pack: ContextPack = {

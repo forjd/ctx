@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { CliArgs } from "../index";
 import { buildContextPack, savePack } from "../../core/context-pack";
+import { readConfig } from "../../core/config";
 import { openDatabase, readIndexedFiles, readRules } from "../../core/db";
 import { json, renderContextPack } from "../../core/output";
 import { detectProject } from "../../core/project";
@@ -13,6 +14,7 @@ export async function packCommand(root: string, args: CliArgs): Promise<void> {
   if (!task) throw new Error("Usage: ctx pack <task>");
 
   const db = await openDatabase(root);
+  const config = await readConfig(root);
   let files = readIndexedFiles(db);
   const project = await detectProject(root);
   let rules = readRules(db);
@@ -20,7 +22,14 @@ export async function packCommand(root: string, args: CliArgs): Promise<void> {
   if (files.length === 0) files = await scanRepository(root);
   if (rules.length === 0) rules = await inferRules(root, project);
 
-  const { pack, history } = await buildContextPack(root, task, project, files, rules);
+  const { pack, history } = await buildContextPack(
+    root,
+    task,
+    project,
+    files,
+    rules,
+    config.scoring,
+  );
   const markdown = renderContextPack(pack, history);
   const output = args.flags.has("json") ? json(pack) : markdown;
   const outputPath = args.values.get("output");

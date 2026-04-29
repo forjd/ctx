@@ -28,6 +28,11 @@ export function defaultConfig(): ProjectConfig {
       node: true,
       vue: true,
     },
+    scoring: {
+      synonyms: {},
+      categoryBoosts: {},
+      broaderTestCommands: [],
+    },
   };
 }
 
@@ -57,5 +62,12 @@ export async function readConfig(root: string): Promise<ProjectConfig> {
   }
 
   const raw = await readFile(path, "utf8");
-  return { ...defaultConfig(), ...JSON.parse(raw) } as ProjectConfig;
+  const parsed = JSON.parse(raw) as Partial<ProjectConfig>;
+  const defaults = defaultConfig();
+  return {
+    ...defaults,
+    ...parsed,
+    frameworks: { ...defaults.frameworks, ...parsed.frameworks },
+    scoring: { ...defaults.scoring, ...parsed.scoring },
+  } as ProjectConfig;
 }

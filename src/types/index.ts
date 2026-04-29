@@ -32,6 +32,13 @@ export interface ProjectConfig {
     node: boolean;
     vue: boolean;
   };
+  scoring: ScoringConfig;
+}
+
+export interface ScoringConfig {
+  synonyms: Record<string, string[]>;
+  categoryBoosts: Record<string, FileCategory[]>;
+  broaderTestCommands: string[];
 }
 
 export interface ProjectInfo {

@@ -107,6 +107,9 @@ ctx pack "task" --output .ctx/packs/my-task.md
 ctx handoff --stdout
 ```
 
+Project-specific scoring can be tuned in `.ctx/config.json` with `scoring.synonyms`,
+`scoring.categoryBoosts`, and `scoring.broaderTestCommands`.
+
 ## How It Works
 
 `ctx` uses simple local heuristics:
