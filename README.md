@@ -2,7 +2,7 @@
 
 [![Built with Bun](https://img.shields.io/badge/Bun-runtime-black?logo=bun)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/TypeScript-ready-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/badge/license-TBD-lightgrey)](#license)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Local context packs for coding agents.
 
@@ -172,4 +172,4 @@ chore: update tooling
 
 ## License
 
-License TBD.
+MIT. See [LICENSE](LICENSE).

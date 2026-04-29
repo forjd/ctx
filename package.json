@@ -1,6 +1,7 @@
 {
   "name": "ctx",
   "private": true,
+  "license": "MIT",
   "bin": {
     "ctx": "src/cli/index.ts"
   },
