@@ -120,10 +120,6 @@ export function rankFiles(files: IndexedFile[], task: string): RankedFile[] {
         score -= 20;
         reasons.push("large file penalty");
       }
-      if (file.isGenerated) {
-        score -= 40;
-        reasons.push("generated/dependency file penalty");
-      }
       if (/\.(lock|lockb)$/.test(file.path)) score -= 25;
 
       return {
