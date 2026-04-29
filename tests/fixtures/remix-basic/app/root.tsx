@@ -1,5 +1,3 @@
-import { Outlet } from "react-router";
-
-export default function Root(): JSX.Element {
-  return <Outlet />;
+export default function Root(): null {
+  return null;
 }

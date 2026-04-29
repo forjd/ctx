@@ -2,7 +2,7 @@ import { $ } from "bun";
 
 export async function gitLines(args: string[], cwd: string): Promise<string[]> {
   try {
-    const output = await $`git ${args}`.cwd(cwd).quiet().text();
+    const output = await $`git ${args}`.cwd(cwd).env(gitEnv()).quiet().text();
     return output
       .split("\n")
       .map((line) => line.trim())
@@ -14,10 +14,18 @@ export async function gitLines(args: string[], cwd: string): Promise<string[]> {
 
 export async function gitText(args: string[], cwd: string): Promise<string> {
   try {
-    return await $`git ${args}`.cwd(cwd).quiet().text();
+    return await $`git ${args}`.cwd(cwd).env(gitEnv()).quiet().text();
   } catch {
     return "";
   }
+}
+
+function gitEnv(): Record<string, string | undefined> {
+  const env = { ...Bun.env };
+  delete env.GIT_DIR;
+  delete env.GIT_WORK_TREE;
+  delete env.GIT_INDEX_FILE;
+  return env;
 }
 
 export async function changedFiles(root: string, staged = false): Promise<string[]> {
