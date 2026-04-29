@@ -1,8 +1,11 @@
 # ctx
 
-[![Built with Bun](https://img.shields.io/badge/Bun-runtime-black?logo=bun)](https://bun.sh)
-[![TypeScript](https://img.shields.io/badge/TypeScript-ready-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![CI](https://github.com/forjd/ctx/actions/workflows/ci.yml/badge.svg)](https://github.com/forjd/ctx/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/badge/coverage-95%25%2B-brightgreen)](scripts/check-coverage.ts)
+[![License: MIT](https://img.shields.io/github/license/forjd/ctx)](LICENSE)
+[![Bun](https://img.shields.io/badge/runtime-Bun-black?logo=bun)](https://bun.sh)
+[![TypeScript](https://img.shields.io/badge/language-TypeScript-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Local First](https://img.shields.io/badge/local--first-no%20AI%20API-7c3aed)](#how-it-works)
 
 Local context packs for coding agents.
 
