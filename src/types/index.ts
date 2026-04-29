@@ -7,6 +7,7 @@ export type Framework =
   | "nestjs"
   | "remix"
   | "react-router"
+  | "astro"
   | "vue"
   | "react"
   | "next"
@@ -44,6 +45,7 @@ export type FileCategory =
   | "api-route"
   | "frontend-layout"
   | "frontend-composable"
+  | "frontend-content"
   | "enum"
   | "unknown";
 
@@ -61,6 +63,7 @@ export interface ProjectConfig {
     nestjs: boolean;
     remix: boolean;
     reactRouter: boolean;
+    astro: boolean;
     vue: boolean;
     react: boolean;
     next: boolean;

@@ -134,6 +134,8 @@ export function categorizeFile(path: string): FileCategory {
   if (/^(app|src\/app)\/(.*\/)?(page|layout)\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
   if (/^(pages|src\/pages)\/.+\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
   if (path.startsWith("pages/")) return "frontend-route";
+  if (path.startsWith("src/pages/")) return "frontend-route";
+  if (path.startsWith("src/content/")) return "frontend-content";
   if (path.startsWith("app/routes/")) return "frontend-route";
   if (/^app\/root\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-layout";
   if (path.startsWith("layouts/")) return "frontend-layout";
@@ -158,12 +160,12 @@ export function categorizeFile(path: string): FileCategory {
 
 export function extractSymbols(path: string, content: string): SymbolInfo[] {
   if (path.endsWith(".php")) return extractPhpSymbols(content);
-  if (/\.(ts|tsx|js|jsx|vue|svelte)$/.test(path)) return extractTypeScriptSymbols(content);
+  if (/\.(ts|tsx|js|jsx|vue|svelte|astro)$/.test(path)) return extractTypeScriptSymbols(content);
   return [];
 }
 
 export function extractImportSpecifiers(path: string, content: string): string[] {
-  if (/\.(ts|tsx|js|jsx|vue|svelte)$/.test(path)) return extractTypeScriptImports(content);
+  if (/\.(ts|tsx|js|jsx|vue|svelte|astro)$/.test(path)) return extractTypeScriptImports(content);
   if (path.endsWith(".php")) return extractPhpImports(content);
   return [];
 }
@@ -252,12 +254,14 @@ function resolveRelativeImport(path: string, specifier: string, paths: Set<strin
     `${base}.jsx`,
     `${base}.vue`,
     `${base}.svelte`,
+    `${base}.astro`,
     `${base}/index.ts`,
     `${base}/index.tsx`,
     `${base}/index.js`,
     `${base}/index.jsx`,
     `${base}/index.vue`,
     `${base}/index.svelte`,
+    `${base}/index.astro`,
   ];
   return candidates.find((candidate) => paths.has(candidate)) ?? null;
 }
@@ -286,6 +290,7 @@ function languageFor(extension: string, path: string): string {
   if (extension === ".php") return "php";
   if (extension === ".vue") return "vue";
   if (extension === ".svelte") return "svelte";
+  if (extension === ".astro") return "astro";
   if (extension === ".ts" || extension === ".tsx") return "typescript";
   if (extension === ".js" || extension === ".jsx") return "javascript";
   if (extension === ".json") return "json";

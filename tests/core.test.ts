@@ -10,6 +10,7 @@ import { rankFiles, recommendTests } from "../src/core/scorer";
 import { categorizeFile, extractSymbols, scanRepository } from "../src/core/scanner";
 
 const root = process.cwd();
+const astroFixture = join(root, "tests/fixtures/astro-basic");
 const laravelFixture = join(root, "tests/fixtures/laravel-basic");
 const nestFixture = join(root, "tests/fixtures/nest-basic");
 const nodeHttpFixture = join(root, "tests/fixtures/node-http-basic");
@@ -61,6 +62,12 @@ describe("project detection", () => {
     expect(project.frameworks).toContain("typescript");
   });
 
+  test("detects Astro from fixture", async () => {
+    const project = await detectProject(astroFixture);
+    expect(project.frameworks).toContain("astro");
+    expect(project.frameworks).toContain("typescript");
+  });
+
   test("detects Nuxt from fixture", async () => {
     const project = await detectProject(nuxtFixture);
     expect(project.frameworks).toContain("nuxt");
@@ -106,6 +113,8 @@ describe("scanner", () => {
     expect(categorizeFile("composables/useAccount.ts")).toBe("frontend-composable");
     expect(categorizeFile("app/routes/accounts.tsx")).toBe("frontend-route");
     expect(categorizeFile("app/root.tsx")).toBe("frontend-layout");
+    expect(categorizeFile("src/pages/index.astro")).toBe("frontend-route");
+    expect(categorizeFile("src/content/posts/welcome.md")).toBe("frontend-content");
     expect(categorizeFile("src/routes/dashboard/+page.svelte")).toBe("frontend-route");
     expect(categorizeFile("src/routes/+layout.svelte")).toBe("frontend-layout");
     expect(categorizeFile("src/lib/components/AccountCard.svelte")).toBe("frontend-component");
@@ -155,6 +164,11 @@ describe("scanner", () => {
       (file) => file.path === "src/accounts/accounts.controller.ts",
     );
     expect(controller?.dependencies).toContain("src/accounts/accounts.service.ts");
+
+    const astroFiles = await scanRepository(astroFixture);
+    const astroPage = astroFiles.find((file) => file.path === "src/pages/index.astro");
+    expect(astroPage?.language).toBe("astro");
+    expect(astroPage?.dependencies).toContain("src/components/Hero.astro");
 
     const svelteFiles = await scanRepository(sveltekitFixture);
     const route = svelteFiles.find((file) => file.path === "src/routes/dashboard/+page.svelte");
