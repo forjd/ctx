@@ -25,6 +25,7 @@ bun run typecheck
 bun run lint
 bun run format:check
 bun test
+bun run coverage
 ```
 
 Format before finishing when files changed:
@@ -61,6 +62,14 @@ Prefer adding reusable logic in `src/core` and keeping command files small.
 ## Testing
 
 Add or update Bun tests for behaviour changes. Use fixtures when possible instead of relying on the developer's local repositories.
+
+Coverage is checked with:
+
+```bash
+bun run coverage
+```
+
+The coverage gate runs `bun test --coverage` through `scripts/check-coverage.ts` and requires at least 95% line coverage by default. Use focused tests for uncovered branches in `src/core` before lowering or bypassing the threshold.
 
 Minimum expectation before handoff:
 

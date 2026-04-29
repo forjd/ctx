@@ -16,6 +16,7 @@ import {
   json,
   renderContextPack,
   renderDiffRisk,
+  renderFileExplanation,
   renderProjectMap,
   renderRules,
   renderTests,
@@ -150,6 +151,56 @@ describe("output renderers", () => {
       }),
     ).toContain("No notable risk signals detected.");
   });
+
+  test("renders file explanations with populated and fallback sections", () => {
+    const populated = renderFileExplanation({
+      schemaVersion: 1,
+      path: "app/Services/ReminderService.php",
+      category: "service",
+      language: "php",
+      isTest: false,
+      isGenerated: false,
+      reasons: ["path matches reminder"],
+      symbols: [{ name: "ReminderService", kind: "class", lineStart: 7 }],
+      dependencies: ["app/Models/Reminder.php"],
+      dependents: ["app/Jobs/ReminderJob.php"],
+      relatedTests: [
+        {
+          path: "tests/Feature/ReminderTest.php",
+          command: "php artisan test tests/Feature/ReminderTest.php",
+          reason: "Direct filename match.",
+        },
+      ],
+      applicableRules: rules,
+    });
+
+    expect(populated).toContain("Path: app/Services/ReminderService.php");
+    expect(populated).toContain("- class ReminderService:7");
+    expect(populated).toContain("- app/Models/Reminder.php");
+    expect(populated).toContain("- tests/Feature/ReminderTest.php");
+    expect(populated).toContain("- Use Pest for PHP tests. (pest.php)");
+
+    const fallback = renderFileExplanation({
+      schemaVersion: 1,
+      path: "README.md",
+      category: "unknown",
+      language: "markdown",
+      isTest: false,
+      isGenerated: false,
+      reasons: ["documentation file"],
+      symbols: [],
+      dependencies: [],
+      dependents: [],
+      relatedTests: [],
+      applicableRules: [],
+    });
+
+    expect(fallback).toContain("- No symbols extracted.");
+    expect(fallback).toContain("- No dependencies resolved.");
+    expect(fallback).toContain("- No dependents resolved.");
+    expect(fallback).toContain("- No related tests found.");
+    expect(fallback).toContain("- No specific rules matched.");
+  });
 });
 
 describe("rules", () => {
@@ -169,6 +220,60 @@ describe("rules", () => {
     );
     expect(inferred.some((rule) => rule.source === ".cursor/rules/frontend.md")).toBe(true);
     expect(inferred.some((rule) => rule.source === "docs")).toBe(true);
+  });
+
+  test("infers rules for supported backend and frontend frameworks", async () => {
+    const root = await tempRoot();
+    const inferred = await inferRules(root, {
+      ...project,
+      frameworks: [
+        "symfony",
+        "express",
+        "fastify",
+        "hono",
+        "nestjs",
+        "remix",
+        "react-router",
+        "astro",
+        "rails",
+        "django",
+        "fastapi",
+        "flask",
+        "go",
+        "wordpress",
+        "drupal",
+        "react",
+        "next",
+        "nuxt",
+        "svelte",
+        "sveltekit",
+      ],
+    });
+    const texts = inferred.map((rule) => rule.text);
+
+    expect(texts).toContain("Use Symfony console, controller, service, and entity conventions.");
+    expect(texts).toContain("Keep Node HTTP routes, middleware, handlers, and schemas explicit.");
+    expect(texts).toContain("Keep NestJS modules, controllers, and providers aligned.");
+    expect(texts).toContain(
+      "Use route modules under app/routes for Remix or React Router changes.",
+    );
+    expect(texts).toContain(
+      "Use Astro pages and content collections under src/pages and src/content.",
+    );
+    expect(texts).toContain("Use Rails migrations for schema changes.");
+    expect(texts).toContain("Use Django migrations for model schema changes.");
+    expect(texts).toContain("Keep FastAPI routers, dependencies, and Pydantic schemas explicit.");
+    expect(texts).toContain("Keep Flask routes, blueprints, and app setup explicit.");
+    expect(texts).toContain("Keep Go packages small and test package behaviour with go test.");
+    expect(texts).toContain("Keep WordPress plugin hooks and theme templates explicit.");
+    expect(texts).toContain("Keep Drupal module routing, services, and config YAML aligned.");
+    expect(texts).toContain("Use React components for frontend UI changes.");
+    expect(texts).toContain("Respect Next.js app or pages routing conventions.");
+    expect(texts).toContain(
+      "Use Nuxt conventions for pages, layouts, composables, and server routes.",
+    );
+    expect(texts).toContain("Use Svelte components under src/lib/components or framework routes.");
+    expect(texts).toContain("Use SvelteKit route conventions under src/routes.");
   });
 });
 
