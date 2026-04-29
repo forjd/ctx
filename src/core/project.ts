@@ -44,6 +44,13 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
   )
     frameworks.add("react-router");
   if (
+    packageHas(packageRaw, "astro") ||
+    existsSync(join(root, "astro.config.js")) ||
+    existsSync(join(root, "astro.config.ts")) ||
+    (await hasAnyFileWithExtension(root, ".astro"))
+  )
+    frameworks.add("astro");
+  if (
     packageHas(packageRaw, "vue") ||
     packageHas(packageRaw, "nuxt") ||
     existsSync(join(root, "resources/js")) ||
@@ -151,6 +158,7 @@ function conventions(frameworks: Framework[]): string[] {
   if (frameworks.includes("nestjs")) rules.push("Uses NestJS modules and providers");
   if (frameworks.includes("remix")) rules.push("Uses Remix route modules");
   if (frameworks.includes("react-router")) rules.push("Uses React Router route modules");
+  if (frameworks.includes("astro")) rules.push("Uses Astro pages and content collections");
   if (frameworks.includes("nuxt")) rules.push("Uses Nuxt routing and server conventions");
   if (frameworks.includes("svelte")) rules.push("Uses Svelte frontend");
   if (frameworks.includes("sveltekit")) rules.push("Uses SvelteKit routing");

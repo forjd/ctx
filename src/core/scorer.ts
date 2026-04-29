@@ -37,6 +37,8 @@ const categoryBoosts: Record<string, string[]> = {
   nestjs: ["module", "controller", "service", "test"],
   remix: ["frontend-route", "frontend-layout"],
   "react-router": ["frontend-route", "frontend-layout"],
+  astro: ["frontend-route", "frontend-component", "frontend-content"],
+  content: ["frontend-content"],
   vue: ["frontend-page", "frontend-component"],
   nuxt: ["frontend-route", "frontend-component", "frontend-layout", "frontend-composable"],
   composable: ["frontend-composable"],
@@ -229,6 +231,7 @@ export function broaderTestCommands(
     frameworks.includes("nestjs") ||
     frameworks.includes("remix") ||
     frameworks.includes("react-router") ||
+    frameworks.includes("astro") ||
     frameworks.includes("vue") ||
     frameworks.includes("nuxt") ||
     frameworks.includes("svelte") ||

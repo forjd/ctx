@@ -32,6 +32,7 @@ export function defaultConfig(): ProjectConfig {
       nestjs: true,
       remix: true,
       reactRouter: true,
+      astro: true,
       vue: true,
       react: true,
       next: true,

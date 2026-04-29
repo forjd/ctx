@@ -34,6 +34,12 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
       "package.json",
       "high",
     );
+  if (project.frameworks.includes("astro"))
+    add(
+      "Use Astro pages and content collections under src/pages and src/content.",
+      "astro.config",
+      "high",
+    );
   if (project.frameworks.includes("vue"))
     add("Use Vue components under resources/js or src/components.", "package.json", "high");
   if (project.frameworks.includes("react"))
