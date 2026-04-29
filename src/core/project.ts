@@ -9,6 +9,10 @@ async function fileContains(path: string, text: string): Promise<boolean> {
   return (await readFile(path, "utf8")).includes(text);
 }
 
+function packageHas(raw: string, name: string): boolean {
+  return raw.includes(`"${name}"`);
+}
+
 export async function detectProject(root: string): Promise<ProjectInfo> {
   const frameworks = new Set<Framework>();
   const composer = join(root, "composer.json");
@@ -27,7 +31,7 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
 
   if (existsSync(packageJson)) frameworks.add("node");
   if (
-    packageRaw.includes('"vue"') ||
+    packageHas(packageRaw, "vue") ||
     existsSync(join(root, "resources/js")) ||
     existsSync(join(root, "vite.config.ts")) ||
     existsSync(join(root, "vite.config.js")) ||
@@ -36,14 +40,14 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
     frameworks.add("vue");
   }
   if (
-    packageRaw.includes('"react"') ||
+    packageHas(packageRaw, "react") ||
     existsSync(join(root, "src/App.tsx")) ||
     existsSync(join(root, "src/App.jsx"))
   ) {
     frameworks.add("react");
   }
   if (
-    packageRaw.includes('"next"') ||
+    packageHas(packageRaw, "next") ||
     existsSync(join(root, "next.config.js")) ||
     existsSync(join(root, "next.config.ts")) ||
     existsSync(join(root, "app/page.tsx")) ||
@@ -51,6 +55,22 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
   ) {
     frameworks.add("next");
     frameworks.add("react");
+  }
+  if (
+    packageHas(packageRaw, "svelte") ||
+    existsSync(join(root, "svelte.config.js")) ||
+    existsSync(join(root, "svelte.config.ts")) ||
+    (await hasAnyFileWithExtension(root, ".svelte"))
+  ) {
+    frameworks.add("svelte");
+  }
+  if (
+    packageHas(packageRaw, "@sveltejs/kit") ||
+    existsSync(join(root, "src/routes")) ||
+    existsSync(join(root, "src/app.html"))
+  ) {
+    frameworks.add("sveltekit");
+    frameworks.add("svelte");
   }
   if (
     existsSync(join(root, "tsconfig.json")) ||
@@ -102,6 +122,8 @@ function conventions(frameworks: Framework[]): string[] {
   if (frameworks.includes("vue")) rules.push("Uses Vue frontend");
   if (frameworks.includes("react")) rules.push("Uses React frontend");
   if (frameworks.includes("next")) rules.push("Uses Next.js routing");
+  if (frameworks.includes("svelte")) rules.push("Uses Svelte frontend");
+  if (frameworks.includes("sveltekit")) rules.push("Uses SvelteKit routing");
   if (frameworks.includes("laravel")) {
     rules.push("Uses Laravel migrations");
     rules.push("Uses Laravel application structure");

@@ -1,4 +1,13 @@
-export type Framework = "laravel" | "node" | "vue" | "react" | "next" | "typescript" | "pest";
+export type Framework =
+  | "laravel"
+  | "node"
+  | "vue"
+  | "react"
+  | "next"
+  | "svelte"
+  | "sveltekit"
+  | "typescript"
+  | "pest";
 
 export type FileCategory =
   | "model"
@@ -18,9 +27,11 @@ export type FileCategory =
   | "route"
   | "config"
   | "frontend-page"
+  | "frontend-route"
   | "frontend-component"
   | "frontend-hook"
   | "api-route"
+  | "frontend-layout"
   | "enum"
   | "unknown";
 
@@ -35,6 +46,8 @@ export interface ProjectConfig {
     vue: boolean;
     react: boolean;
     next: boolean;
+    svelte: boolean;
+    sveltekit: boolean;
   };
   scoring: ScoringConfig;
 }

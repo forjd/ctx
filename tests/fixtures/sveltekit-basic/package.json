@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@sveltejs/kit": "^2.0.0",
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0"
+  }
+}
