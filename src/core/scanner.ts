@@ -119,6 +119,12 @@ export function categorizeFile(path: string): FileCategory {
   if (path.startsWith("tests/Feature/")) return "feature-test";
   if (path.startsWith("tests/Unit/")) return "unit-test";
   if (path.startsWith("routes/")) return "route";
+  if (path.startsWith("src/routes/") && !/\/\+(page|layout)\.(svelte|vue|ts|js)$/.test(path))
+    return "api-route";
+  if (path.startsWith("src/controllers/")) return "controller";
+  if (path.startsWith("src/middleware/")) return "middleware";
+  if (path.startsWith("src/handlers/")) return "action";
+  if (path.startsWith("src/schemas/")) return "schema";
   if (path.startsWith("config/")) return "config";
   if (/^(app|src\/app)\/api\/.+\/route\.(ts|tsx|js|jsx)$/.test(path)) return "api-route";
   if (/^(app|src\/app)\/(.*\/)?(page|layout)\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";

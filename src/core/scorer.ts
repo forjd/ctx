@@ -22,10 +22,16 @@ const categoryBoosts: Record<string, string[]> = {
   expiry: ["model", "migration", "enum", "job", "feature-test"],
   validation: ["request", "feature-test"],
   policy: ["policy", "feature-test"],
-  controller: ["controller", "route", "feature-test"],
+  controller: ["controller", "route", "api-route", "feature-test"],
   frontend: ["frontend-page", "frontend-component"],
-  route: ["route", "frontend-route"],
-  routes: ["route", "frontend-route"],
+  route: ["route", "api-route", "frontend-route"],
+  routes: ["route", "api-route", "frontend-route"],
+  api: ["api-route", "middleware", "schema"],
+  middleware: ["middleware"],
+  schema: ["schema"],
+  express: ["api-route", "middleware", "schema"],
+  fastify: ["api-route", "middleware", "schema"],
+  hono: ["api-route", "middleware", "schema"],
   vue: ["frontend-page", "frontend-component"],
   nuxt: ["frontend-route", "frontend-component", "frontend-layout", "frontend-composable"],
   composable: ["frontend-composable"],
@@ -212,6 +218,9 @@ export function broaderTestCommands(
   if (packageScripts.includes("test")) commands.add("bun test");
   if (
     frameworks.includes("node") ||
+    frameworks.includes("express") ||
+    frameworks.includes("fastify") ||
+    frameworks.includes("hono") ||
     frameworks.includes("vue") ||
     frameworks.includes("nuxt") ||
     frameworks.includes("svelte") ||

@@ -26,6 +26,9 @@ export function defaultConfig(): ProjectConfig {
     frameworks: {
       laravel: true,
       node: true,
+      express: true,
+      fastify: true,
+      hono: true,
       vue: true,
       react: true,
       next: true,

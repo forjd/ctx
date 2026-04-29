@@ -16,6 +16,16 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
     add("Use Laravel jobs for queued work.", "app/Jobs", "medium");
     add("Use notifications for user-facing reminders.", "app/Notifications", "medium");
   }
+  if (
+    project.frameworks.includes("express") ||
+    project.frameworks.includes("fastify") ||
+    project.frameworks.includes("hono")
+  )
+    add(
+      "Keep Node HTTP routes, middleware, handlers, and schemas explicit.",
+      "package.json",
+      "medium",
+    );
   if (project.frameworks.includes("vue"))
     add("Use Vue components under resources/js or src/components.", "package.json", "high");
   if (project.frameworks.includes("react"))
