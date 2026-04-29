@@ -1,0 +1,2 @@
+describe Account do
+end

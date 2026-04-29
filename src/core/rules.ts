@@ -40,6 +40,10 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
       "astro.config",
       "high",
     );
+  if (project.frameworks.includes("rails")) {
+    add("Use Rails migrations for schema changes.", "Gemfile", "high");
+    add("Run Rails or RSpec tests for backend changes.", "Gemfile", "medium");
+  }
   if (project.frameworks.includes("vue"))
     add("Use Vue components under resources/js or src/components.", "package.json", "high");
   if (project.frameworks.includes("react"))

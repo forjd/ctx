@@ -33,6 +33,7 @@ export function defaultConfig(): ProjectConfig {
       remix: true,
       reactRouter: true,
       astro: true,
+      rails: true,
       vue: true,
       react: true,
       next: true,

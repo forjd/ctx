@@ -8,6 +8,7 @@ export type Framework =
   | "remix"
   | "react-router"
   | "astro"
+  | "rails"
   | "vue"
   | "react"
   | "next"
@@ -64,6 +65,7 @@ export interface ProjectConfig {
     remix: boolean;
     reactRouter: boolean;
     astro: boolean;
+    rails: boolean;
     vue: boolean;
     react: boolean;
     next: boolean;

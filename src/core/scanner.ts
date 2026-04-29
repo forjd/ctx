@@ -105,7 +105,9 @@ function toRelative(root: string, path: string): string {
 
 export function categorizeFile(path: string): FileCategory {
   if (path.startsWith("app/Models/")) return "model";
+  if (path.startsWith("app/models/")) return "model";
   if (path.startsWith("app/Http/Controllers/")) return "controller";
+  if (path.startsWith("app/controllers/")) return "controller";
   if (path.startsWith("app/Http/Requests/")) return "request";
   if (path.startsWith("app/Http/Resources/")) return "resource";
   if (path.startsWith("app/Services/")) return "service";
@@ -115,10 +117,15 @@ export function categorizeFile(path: string): FileCategory {
   if (path.startsWith("app/Policies/")) return "policy";
   if (path.startsWith("app/Enums/")) return "enum";
   if (path.startsWith("database/migrations/")) return "migration";
+  if (path.startsWith("db/migrate/")) return "migration";
   if (path.startsWith("database/factories/")) return "factory";
+  if (path.startsWith("spec/factories/")) return "factory";
   if (path.startsWith("tests/Feature/")) return "feature-test";
   if (path.startsWith("tests/Unit/")) return "unit-test";
+  if (path.startsWith("spec/")) return "test";
+  if (path.startsWith("test/")) return "test";
   if (path.startsWith("routes/")) return "route";
+  if (path === "config/routes.rb") return "route";
   if (path.startsWith("src/routes/") && !/\/\+(page|layout)\.(svelte|vue|ts|js)$/.test(path))
     return "api-route";
   if (path.startsWith("src/controllers/")) return "controller";
@@ -160,6 +167,7 @@ export function categorizeFile(path: string): FileCategory {
 
 export function extractSymbols(path: string, content: string): SymbolInfo[] {
   if (path.endsWith(".php")) return extractPhpSymbols(content);
+  if (path.endsWith(".rb")) return extractRubySymbols(content);
   if (/\.(ts|tsx|js|jsx|vue|svelte|astro)$/.test(path)) return extractTypeScriptSymbols(content);
   return [];
 }
@@ -174,6 +182,19 @@ function extractPhpSymbols(content: string): SymbolInfo[] {
   const symbols: SymbolInfo[] = [];
   const lines = content.split("\n");
   const pattern = /\b(class|interface|trait|enum|function)\s+([A-Za-z_][A-Za-z0-9_]*)/;
+  lines.forEach((line, index) => {
+    const match = line.match(pattern);
+    if (match?.[1] && match[2]) {
+      symbols.push({ kind: match[1], name: match[2], lineStart: index + 1 });
+    }
+  });
+  return symbols;
+}
+
+function extractRubySymbols(content: string): SymbolInfo[] {
+  const symbols: SymbolInfo[] = [];
+  const lines = content.split("\n");
+  const pattern = /^\s*(class|module|def)\s+([A-Za-z_][A-Za-z0-9_:!?=]*)/;
   lines.forEach((line, index) => {
     const match = line.match(pattern);
     if (match?.[1] && match[2]) {
@@ -288,6 +309,7 @@ function symbolKind(pattern: RegExp): string {
 
 function languageFor(extension: string, path: string): string {
   if (extension === ".php") return "php";
+  if (extension === ".rb") return "ruby";
   if (extension === ".vue") return "vue";
   if (extension === ".svelte") return "svelte";
   if (extension === ".astro") return "astro";
@@ -301,6 +323,8 @@ function languageFor(extension: string, path: string): string {
 function isTestPath(path: string): boolean {
   return (
     path.startsWith("tests/") ||
+    path.startsWith("spec/") ||
+    /^test\/.*_test\.rb$/.test(path) ||
     /\.(test|spec)\.(ts|tsx|js|jsx)$/.test(path) ||
     path.endsWith("Test.php")
   );

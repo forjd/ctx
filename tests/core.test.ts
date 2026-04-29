@@ -17,6 +17,7 @@ const nodeHttpFixture = join(root, "tests/fixtures/node-http-basic");
 const vueFixture = join(root, "tests/fixtures/node-vue-basic");
 const nextFixture = join(root, "tests/fixtures/next-basic");
 const nuxtFixture = join(root, "tests/fixtures/nuxt-basic");
+const railsFixture = join(root, "tests/fixtures/rails-basic");
 const remixFixture = join(root, "tests/fixtures/remix-basic");
 const sveltekitFixture = join(root, "tests/fixtures/sveltekit-basic");
 
@@ -68,6 +69,12 @@ describe("project detection", () => {
     expect(project.frameworks).toContain("typescript");
   });
 
+  test("detects Rails from fixture", async () => {
+    const project = await detectProject(railsFixture);
+    expect(project.frameworks).toContain("rails");
+    expect(project.importantDirectories).toContain("app/models");
+  });
+
   test("detects Nuxt from fixture", async () => {
     const project = await detectProject(nuxtFixture);
     expect(project.frameworks).toContain("nuxt");
@@ -94,8 +101,13 @@ describe("scanner", () => {
 
   test("categorises Laravel files", () => {
     expect(categorizeFile("app/Models/User.php")).toBe("model");
+    expect(categorizeFile("app/models/account.rb")).toBe("model");
     expect(categorizeFile("app/Jobs/SendEmail.php")).toBe("job");
+    expect(categorizeFile("app/controllers/accounts_controller.rb")).toBe("controller");
     expect(categorizeFile("database/migrations/create_users.php")).toBe("migration");
+    expect(categorizeFile("db/migrate/20260429000000_create_accounts.rb")).toBe("migration");
+    expect(categorizeFile("config/routes.rb")).toBe("route");
+    expect(categorizeFile("spec/models/account_spec.rb")).toBe("test");
     expect(categorizeFile("src/routes/accounts.ts")).toBe("api-route");
     expect(categorizeFile("src/middleware/requireAuth.ts")).toBe("middleware");
     expect(categorizeFile("src/schemas/accountSchema.ts")).toBe("schema");
@@ -136,6 +148,12 @@ describe("scanner", () => {
     );
     expect(symbols.map((symbol) => symbol.name)).toContain("buildContextPack");
     expect(symbols.map((symbol) => symbol.name)).toContain("ContextPack");
+  });
+
+  test("extracts Ruby classes and methods", () => {
+    const symbols = extractSymbols("app/models/account.rb", "class Account\n  def active?\n  end\nend\n");
+    expect(symbols.map((symbol) => symbol.name)).toContain("Account");
+    expect(symbols.map((symbol) => symbol.name)).toContain("active?");
   });
 
   test("resolves local dependency edges", async () => {
