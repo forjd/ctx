@@ -12,6 +12,7 @@ export type Framework =
   | "rails"
   | "django"
   | "fastapi"
+  | "flask"
   | "vue"
   | "react"
   | "next"
@@ -72,6 +73,7 @@ export interface ProjectConfig {
     rails: boolean;
     django: boolean;
     fastapi: boolean;
+    flask: boolean;
     vue: boolean;
     react: boolean;
     next: boolean;

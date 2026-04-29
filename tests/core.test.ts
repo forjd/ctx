@@ -13,6 +13,7 @@ const root = process.cwd();
 const astroFixture = join(root, "tests/fixtures/astro-basic");
 const djangoFixture = join(root, "tests/fixtures/django-basic");
 const fastapiFixture = join(root, "tests/fixtures/fastapi-basic");
+const flaskFixture = join(root, "tests/fixtures/flask-basic");
 const laravelFixture = join(root, "tests/fixtures/laravel-basic");
 const symfonyFixture = join(root, "tests/fixtures/symfony-basic");
 const nestFixture = join(root, "tests/fixtures/nest-basic");
@@ -95,6 +96,12 @@ describe("project detection", () => {
     expect(project.importantDirectories).toContain("app/routers");
   });
 
+  test("detects Flask from fixture", async () => {
+    const project = await detectProject(flaskFixture);
+    expect(project.frameworks).toContain("flask");
+    expect(project.importantDirectories).toContain("app/blueprints");
+  });
+
   test("detects Nuxt from fixture", async () => {
     const project = await detectProject(nuxtFixture);
     expect(project.frameworks).toContain("nuxt");
@@ -139,6 +146,8 @@ describe("scanner", () => {
     expect(categorizeFile("demo/urls.py")).toBe("route");
     expect(categorizeFile("app/routers/accounts.py")).toBe("api-route");
     expect(categorizeFile("api/accounts.py")).toBe("api-route");
+    expect(categorizeFile("app/blueprints/accounts.py")).toBe("route");
+    expect(categorizeFile("blueprints/accounts.py")).toBe("route");
     expect(categorizeFile("demo/settings.py")).toBe("config");
     expect(categorizeFile("accounts/migrations/0001_initial.py")).toBe("migration");
     expect(categorizeFile("accounts/tests.py")).toBe("test");

@@ -83,6 +83,14 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
   )
     frameworks.add("fastapi");
   if (
+    (await fileContains(requirements, "Flask")) ||
+    (await fileContains(requirements, "flask")) ||
+    (await fileContains(pyproject, "flask")) ||
+    (await fileContains(join(root, "app.py"), "Flask")) ||
+    (await fileContains(join(root, "wsgi.py"), "Flask"))
+  )
+    frameworks.add("flask");
+  if (
     packageHas(packageRaw, "vue") ||
     packageHas(packageRaw, "nuxt") ||
     existsSync(join(root, "resources/js")) ||
@@ -172,6 +180,7 @@ function importantDirectories(root: string): string[] {
     "app/Services",
     "app/api",
     "app/routers",
+    "app/blueprints",
     "app/Jobs",
     "app/Notifications",
     "database/migrations",
@@ -204,6 +213,7 @@ function conventions(frameworks: Framework[]): string[] {
   if (frameworks.includes("rails")) rules.push("Uses Rails application conventions");
   if (frameworks.includes("django")) rules.push("Uses Django application conventions");
   if (frameworks.includes("fastapi")) rules.push("Uses FastAPI route and dependency conventions");
+  if (frameworks.includes("flask")) rules.push("Uses Flask route and blueprint conventions");
   if (frameworks.includes("nuxt")) rules.push("Uses Nuxt routing and server conventions");
   if (frameworks.includes("svelte")) rules.push("Uses Svelte frontend");
   if (frameworks.includes("sveltekit")) rules.push("Uses SvelteKit routing");

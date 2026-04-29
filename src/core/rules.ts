@@ -64,6 +64,10 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
     );
     add("Run pytest for FastAPI changes.", "pyproject.toml", "medium");
   }
+  if (project.frameworks.includes("flask")) {
+    add("Keep Flask routes, blueprints, and app setup explicit.", "pyproject.toml", "high");
+    add("Run pytest for Flask changes.", "pyproject.toml", "medium");
+  }
   if (project.frameworks.includes("vue"))
     add("Use Vue components under resources/js or src/components.", "package.json", "high");
   if (project.frameworks.includes("react"))

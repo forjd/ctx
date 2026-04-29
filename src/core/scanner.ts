@@ -135,6 +135,7 @@ export function categorizeFile(path: string): FileCategory {
   if (path === "config/routes.rb") return "route";
   if (path.endsWith("/urls.py")) return "route";
   if (/^(app\/)?(api|routers)\//.test(path) && path.endsWith(".py")) return "api-route";
+  if (/^(app\/)?blueprints\//.test(path) && path.endsWith(".py")) return "route";
   if (path.endsWith("/models.py")) return "model";
   if (path.endsWith("/views.py")) return "controller";
   if (path.endsWith("/forms.py")) return "request";
