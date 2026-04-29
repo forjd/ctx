@@ -17,6 +17,7 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
   const frameworks = new Set<Framework>();
   const composer = join(root, "composer.json");
   const packageJson = join(root, "package.json");
+  const gemfile = join(root, "Gemfile");
   const packageRaw = existsSync(packageJson) ? await readFile(packageJson, "utf8") : "";
 
   if (
@@ -50,6 +51,12 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
     (await hasAnyFileWithExtension(root, ".astro"))
   )
     frameworks.add("astro");
+  if (
+    (await fileContains(gemfile, "rails")) ||
+    existsSync(join(root, "config/application.rb")) ||
+    existsSync(join(root, "app/controllers"))
+  )
+    frameworks.add("rails");
   if (
     packageHas(packageRaw, "vue") ||
     packageHas(packageRaw, "nuxt") ||
@@ -132,12 +139,17 @@ function detectPackageManager(root: string): ProjectInfo["packageManager"] {
 function importantDirectories(root: string): string[] {
   return [
     "app/Models",
+    "app/models",
     "app/Http/Controllers",
+    "app/controllers",
     "app/Services",
     "app/Jobs",
     "app/Notifications",
     "database/migrations",
+    "db/migrate",
     "tests/Feature",
+    "spec",
+    "test",
     "resources/js",
     "src",
     "app",
@@ -159,6 +171,7 @@ function conventions(frameworks: Framework[]): string[] {
   if (frameworks.includes("remix")) rules.push("Uses Remix route modules");
   if (frameworks.includes("react-router")) rules.push("Uses React Router route modules");
   if (frameworks.includes("astro")) rules.push("Uses Astro pages and content collections");
+  if (frameworks.includes("rails")) rules.push("Uses Rails application conventions");
   if (frameworks.includes("nuxt")) rules.push("Uses Nuxt routing and server conventions");
   if (frameworks.includes("svelte")) rules.push("Uses Svelte frontend");
   if (frameworks.includes("sveltekit")) rules.push("Uses SvelteKit routing");
