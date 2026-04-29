@@ -1,6 +1,6 @@
 # Outcome Benchmarks
 
-This benchmark is for measuring whether agents complete tasks better when they start from a `ctx` pack.
+This benchmark is for measuring whether agents complete tasks better with `ctx`.
 
 It does not run an agent. The benchmark only:
 
@@ -18,14 +18,21 @@ Generated briefs are written to `.tmp/benchmark-outcomes/<task-id>/`:
 
 - `no-context.md`: the task with no `ctx` pack
 - `ctx-pack.md`: the same task plus a generated context pack
-- `attempt-template.json`: a template for recording the run result
+- `ctx-skill.md`: the same task plus the `ctx-context-pack` skill workflow, but no precomputed pack
+- `attempt-template.json`: templates for recording run results
+
+Use the variants for different claims:
+
+- `no-context`: normal agent baseline
+- `ctx-pack`: isolates whether the generated pack helps
+- `ctx-skill`: measures the fuller agent workflow where the agent decides how to call `ctx`
 
 Record attempts as `.json` files under `benchmarks/outcomes/results`. Each file may contain one attempt object or an array:
 
 ```json
 {
   "taskId": "laravel-source-of-funds-reminders",
-  "variant": "ctx-pack",
+  "variant": "ctx-skill",
   "runId": "codex-2026-04-29-001",
   "agent": "codex",
   "success": true,

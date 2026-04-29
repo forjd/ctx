@@ -21,7 +21,7 @@ Fixture gold files are intentionally small and imperfect. Use this benchmark to 
 
 ## Outcome Benchmark
 
-The outcome benchmark checks recorded agent attempts for `no-context` versus `ctx-pack` variants.
+The outcome benchmark checks recorded agent attempts for `no-context`, `ctx-pack`, and `ctx-skill` variants.
 
 Run:
 

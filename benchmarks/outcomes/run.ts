@@ -7,7 +7,7 @@ import { detectProject } from "../../src/core/project";
 import { inferRules } from "../../src/core/rules";
 import { scanRepository } from "../../src/core/scanner";
 
-type Variant = "no-context" | "ctx-pack";
+type Variant = "no-context" | "ctx-pack" | "ctx-skill";
 
 interface OutcomeTask {
   id: string;
@@ -37,7 +37,7 @@ interface AttemptScore extends OutcomeAttempt {
 }
 
 const root = process.cwd();
-const variants: Variant[] = ["no-context", "ctx-pack"];
+const variants: Variant[] = ["no-context", "ctx-pack", "ctx-skill"];
 
 async function main(): Promise<void> {
   const tasks = await loadTasks();
@@ -70,6 +70,7 @@ async function writeBriefs(tasks: OutcomeTask[]): Promise<void> {
     await mkdir(taskRoot, { recursive: true });
     await writeFile(join(taskRoot, "no-context.md"), noContextBrief(task));
     await writeFile(join(taskRoot, "ctx-pack.md"), await ctxPackBrief(task));
+    await writeFile(join(taskRoot, "ctx-skill.md"), await ctxSkillBrief(task));
     await writeFile(join(taskRoot, "attempt-template.json"), attemptTemplate(task));
   }
 }
@@ -120,12 +121,35 @@ async function ctxPackBrief(task: OutcomeTask): Promise<string> {
   ].join("\n");
 }
 
+async function ctxSkillBrief(task: OutcomeTask): Promise<string> {
+  const skill = await readFile(join(root, "skills/ctx-context-pack/SKILL.md"), "utf8");
+  return [
+    "# Agent Outcome Benchmark",
+    "",
+    `Task ID: ${task.id}`,
+    `Repository: ${task.repo}`,
+    "",
+    "## Task",
+    "",
+    task.task,
+    "",
+    "## Variant",
+    "",
+    "Use the ctx-context-pack skill workflow. Do not use a precomputed context pack from this benchmark harness. Run ctx from the repository when the skill calls for it, inspect the output, then complete the task.",
+    "",
+    "## Skill",
+    "",
+    skill.trim(),
+    "",
+  ].join("\n");
+}
+
 function attemptTemplate(task: OutcomeTask): string {
   return `${JSON.stringify(
-    {
+    variants.map((variant) => ({
       taskId: task.id,
-      variant: "ctx-pack",
-      runId: "replace-with-stable-run-id",
+      variant,
+      runId: `replace-with-stable-run-id-${variant}`,
       agent: "replace-with-agent-name",
       success: false,
       elapsedMs: 0,
@@ -133,7 +157,7 @@ function attemptTemplate(task: OutcomeTask): string {
       filesRead: [],
       filesEdited: [],
       testsRun: [],
-    },
+    })),
     null,
     2,
   )}\n`;
