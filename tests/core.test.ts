@@ -11,6 +11,7 @@ import { categorizeFile, extractSymbols, scanRepository } from "../src/core/scan
 
 const root = process.cwd();
 const laravelFixture = join(root, "tests/fixtures/laravel-basic");
+const nodeHttpFixture = join(root, "tests/fixtures/node-http-basic");
 const vueFixture = join(root, "tests/fixtures/node-vue-basic");
 const nextFixture = join(root, "tests/fixtures/next-basic");
 const nuxtFixture = join(root, "tests/fixtures/nuxt-basic");
@@ -34,6 +35,14 @@ describe("project detection", () => {
     expect(project.frameworks).toContain("react");
     expect(project.frameworks).toContain("next");
     expect(project.frameworks).toContain("typescript");
+  });
+
+  test("detects Node HTTP frameworks from fixture", async () => {
+    const project = await detectProject(nodeHttpFixture);
+    expect(project.frameworks).toContain("node");
+    expect(project.frameworks).toContain("express");
+    expect(project.frameworks).toContain("fastify");
+    expect(project.frameworks).toContain("hono");
   });
 
   test("detects Nuxt from fixture", async () => {
@@ -64,6 +73,9 @@ describe("scanner", () => {
     expect(categorizeFile("app/Models/User.php")).toBe("model");
     expect(categorizeFile("app/Jobs/SendEmail.php")).toBe("job");
     expect(categorizeFile("database/migrations/create_users.php")).toBe("migration");
+    expect(categorizeFile("src/routes/accounts.ts")).toBe("api-route");
+    expect(categorizeFile("src/middleware/requireAuth.ts")).toBe("middleware");
+    expect(categorizeFile("src/schemas/accountSchema.ts")).toBe("schema");
     expect(categorizeFile("resources/js/Pages/Dashboard.vue")).toBe("frontend-page");
     expect(categorizeFile("app/page.tsx")).toBe("frontend-page");
     expect(categorizeFile("app/account/page.tsx")).toBe("frontend-page");
@@ -110,6 +122,12 @@ describe("scanner", () => {
     const nextFiles = await scanRepository(nextFixture);
     const page = nextFiles.find((file) => file.path === "app/page.tsx");
     expect(page?.dependencies).toContain("components/AccountCard.tsx");
+
+    const nodeHttpFiles = await scanRepository(nodeHttpFixture);
+    const apiRoute = nodeHttpFiles.find((file) => file.path === "src/routes/accounts.ts");
+    expect(apiRoute?.dependencies).toContain("src/middleware/requireAuth.ts");
+    expect(apiRoute?.dependencies).toContain("src/handlers/getAccount.ts");
+    expect(apiRoute?.dependencies).toContain("src/schemas/accountSchema.ts");
 
     const svelteFiles = await scanRepository(sveltekitFixture);
     const route = svelteFiles.find((file) => file.path === "src/routes/dashboard/+page.svelte");

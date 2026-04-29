@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "test": "bun test"
+  },
+  "dependencies": {
+    "express": "^5.0.0",
+    "fastify": "^5.0.0",
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0"
+  }
+}

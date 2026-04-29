@@ -1,6 +1,9 @@
 export type Framework =
   | "laravel"
   | "node"
+  | "express"
+  | "fastify"
+  | "hono"
   | "vue"
   | "react"
   | "next"
@@ -26,7 +29,10 @@ export type FileCategory =
   | "unit-test"
   | "test"
   | "route"
+  | "api-route"
   | "config"
+  | "middleware"
+  | "schema"
   | "frontend-page"
   | "frontend-route"
   | "frontend-component"
@@ -45,6 +51,9 @@ export interface ProjectConfig {
   frameworks: {
     laravel: boolean;
     node: boolean;
+    express: boolean;
+    fastify: boolean;
+    hono: boolean;
     vue: boolean;
     react: boolean;
     next: boolean;
