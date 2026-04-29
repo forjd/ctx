@@ -1,5 +1,6 @@
 import type { DiffRiskReport } from "../types";
 import { changedFiles } from "./git";
+import { schemaVersion } from "./schema";
 
 export async function analyzeDiffRisk(root: string, files?: string[]): Promise<DiffRiskReport> {
   const changed = files ?? (await changedFiles(root));
@@ -64,6 +65,7 @@ export async function analyzeDiffRisk(root: string, files?: string[]): Promise<D
   if (filter) checks.add(`php artisan test --filter=${filter}`);
 
   return {
+    schemaVersion,
     riskLevel,
     changedFiles: changed,
     changedAreas: [...areas],

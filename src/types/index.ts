@@ -106,6 +106,7 @@ export interface DependencyEdge {
 }
 
 export interface ContextPack {
+  schemaVersion: 1;
   task: string;
   generatedAt: string;
   project: {
@@ -123,6 +124,7 @@ export interface ContextPack {
 }
 
 export interface DiffRiskReport {
+  schemaVersion: 1;
   riskLevel: "low" | "medium" | "high";
   changedFiles: string[];
   changedAreas: string[];
@@ -131,6 +133,7 @@ export interface DiffRiskReport {
 }
 
 export interface FileExplanation {
+  schemaVersion: 1;
   path: string;
   category: FileCategory;
   language: string;

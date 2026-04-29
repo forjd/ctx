@@ -3,6 +3,7 @@ import { openDatabase, readRules, replaceRules } from "../../core/db";
 import { json, renderRules } from "../../core/output";
 import { detectProject } from "../../core/project";
 import { inferRules } from "../../core/rules";
+import { schemaVersion } from "../../core/schema";
 
 export async function rulesCommand(root: string, args: CliArgs): Promise<void> {
   const db = await openDatabase(root);
@@ -12,5 +13,5 @@ export async function rulesCommand(root: string, args: CliArgs): Promise<void> {
     replaceRules(db, rules);
   }
   db.close();
-  console.log(args.flags.has("json") ? json({ rules }) : renderRules(rules));
+  console.log(args.flags.has("json") ? json({ schemaVersion, rules }) : renderRules(rules));
 }

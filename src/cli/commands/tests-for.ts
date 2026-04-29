@@ -5,6 +5,7 @@ import { changedFiles } from "../../core/git";
 import { json, renderTests } from "../../core/output";
 import { detectProject } from "../../core/project";
 import { broaderTestCommands, recommendTests } from "../../core/scorer";
+import { schemaVersion } from "../../core/schema";
 import { scanRepository } from "../../core/scanner";
 import { warnIfStale } from "../../core/stale";
 
@@ -25,7 +26,7 @@ export async function testsForCommand(root: string, args: CliArgs): Promise<void
   const reasoning = direct.length
     ? direct.map((test) => `${test.path}: ${test.reason}`)
     : ["No direct test matches found; use broader commands."];
-  const payload = { targets, direct, broader, reasoning };
+  const payload = { schemaVersion, targets, direct, broader, reasoning };
   console.log(
     args.flags.has("json")
       ? json(payload)

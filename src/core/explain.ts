@@ -1,4 +1,5 @@
 import type { FileExplanation, IndexedFile, Rule } from "../types";
+import { schemaVersion } from "./schema";
 import { recommendTests } from "./scorer";
 
 export function explainFile(path: string, files: IndexedFile[], rules: Rule[]): FileExplanation {
@@ -6,6 +7,7 @@ export function explainFile(path: string, files: IndexedFile[], rules: Rule[]): 
   if (!file) throw new Error(`File is not indexed: ${path}`);
 
   return {
+    schemaVersion,
     path: file.path,
     category: file.category,
     language: file.language,

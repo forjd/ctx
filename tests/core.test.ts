@@ -168,6 +168,7 @@ describe("context pack behaviours", () => {
       { fileLimit: 3, includeSymbols: true },
     );
     expect(pack.task).toBe("add expiry reminders for source-of-funds requests");
+    expect(pack.schemaVersion).toBe(1);
     expect(Array.isArray(pack.files)).toBe(true);
     expect(pack.files).toHaveLength(3);
     expect(pack.files[0]).toHaveProperty("reason");

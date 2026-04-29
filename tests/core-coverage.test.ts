@@ -46,6 +46,7 @@ const rules: Rule[] = [
 ];
 
 const samplePack: ContextPack = {
+  schemaVersion: 1,
   task: "add reminders",
   generatedAt: "2026-04-29T00:00:00.000Z",
   project: {
@@ -130,6 +131,7 @@ describe("output renderers", () => {
     expect(renderContextPack(samplePack, ["abc123 feat: add reminders"])).toContain("abc123 feat");
     expect(
       renderDiffRisk({
+        schemaVersion: 1,
         riskLevel: "medium",
         changedFiles: ["app/Jobs/ReminderJob.php"],
         changedAreas: ["Queue job"],
@@ -139,6 +141,7 @@ describe("output renderers", () => {
     ).toContain("Risk level: Medium");
     expect(
       renderDiffRisk({
+        schemaVersion: 1,
         riskLevel: "low",
         changedFiles: [],
         changedAreas: [],

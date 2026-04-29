@@ -24,6 +24,7 @@ describe("cli commands", () => {
 
     expect(result.exitCode).toBe(0);
     const payload = JSON.parse(result.stdout);
+    expect(payload.schemaVersion).toBe(1);
     expect(payload.path).toBe("app/Jobs/SendSourceOfFundsReminderJob.php");
     expect(payload.category).toBe("job");
     expect(payload.dependencies).toContain("app/Models/SourceOfFundsRequest.php");
@@ -34,7 +35,7 @@ describe("cli commands", () => {
     const fixture = await copyFixture("laravel-basic");
     const missing = runCli(fixture, ["stale", "--json"]);
     expect(missing.exitCode).toBe(0);
-    expect(JSON.parse(missing.stdout).isStale).toBe(true);
+    expect(JSON.parse(missing.stdout)).toMatchObject({ schemaVersion: 1, isStale: true });
 
     const index = runCli(fixture, ["index"]);
     expect(index.exitCode).toBe(0);
@@ -42,6 +43,7 @@ describe("cli commands", () => {
     const fresh = runCli(fixture, ["stale", "--json"]);
     expect(fresh.exitCode).toBe(0);
     const payload = JSON.parse(fresh.stdout);
+    expect(payload.schemaVersion).toBe(1);
     expect(payload.isStale).toBe(false);
     expect(typeof payload.indexedAt).toBe("string");
   });
@@ -67,6 +69,7 @@ describe("cli commands", () => {
     const result = runCli(fixture, ["pack", "review aml cases", "--json"]);
     expect(result.exitCode).toBe(0);
     const payload = JSON.parse(result.stdout);
+    expect(payload.schemaVersion).toBe(1);
     expect(payload.files[0].path).toContain("SourceOfFunds");
     expect(payload.suggestedCommands).toContain("bun run custom:test");
   });
@@ -76,6 +79,7 @@ describe("cli commands", () => {
     const result = runCli(fixture, ["map", "--json"]);
     expect(result.exitCode).toBe(0);
     const payload = JSON.parse(result.stdout);
+    expect(payload.schemaVersion).toBe(1);
     expect(payload.frameworks).toContain("next");
     expect(payload.frameworks).toContain("react");
   });
@@ -91,6 +95,7 @@ describe("cli commands", () => {
     ]);
     expect(small.exitCode).toBe(0);
     const payload = JSON.parse(small.stdout);
+    expect(payload.schemaVersion).toBe(1);
     expect(payload.files.length).toBeLessThanOrEqual(6);
     expect(payload.files[0].symbols.length).toBeGreaterThan(0);
 
@@ -126,6 +131,7 @@ describe("cli commands", () => {
     const result = runCli(fixture, ["pack", "update request lifecycle", "--changed", "--json"]);
     expect(result.exitCode).toBe(0);
     const payload = JSON.parse(result.stdout);
+    expect(payload.schemaVersion).toBe(1);
     expect(payload.changedFiles).toContain("app/Models/SourceOfFundsRequest.php");
     expect(payload.files[0].path).toBe("app/Models/SourceOfFundsRequest.php");
   });

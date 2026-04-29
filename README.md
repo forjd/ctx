@@ -82,6 +82,8 @@ JSON output is available for agents:
 ctx pack "add retry handling for report exports" --json
 ```
 
+JSON payloads include `schemaVersion` so agents can parse them defensively as `ctx` evolves.
+
 ## Commands
 
 | Command                   | Purpose                                                                   |

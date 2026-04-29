@@ -9,6 +9,7 @@ import type {
   ScoringConfig,
 } from "../types";
 import { gitHistoryForTerms } from "./git";
+import { schemaVersion } from "./schema";
 import { broaderTestCommands, rankFiles, recommendTests, taskTerms } from "./scorer";
 
 export interface ContextPackOptions {
@@ -56,6 +57,7 @@ export async function buildContextPack(
   ].filter((value, index, values) => values.indexOf(value) === index);
 
   const pack: ContextPack = {
+    schemaVersion,
     task,
     generatedAt: new Date().toISOString(),
     project: {

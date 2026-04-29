@@ -5,8 +5,10 @@ import type { Database } from "bun:sqlite";
 import type { IndexedFile } from "../types";
 import { readIndexCreatedAt, readMeta } from "./db";
 import { currentHead } from "./git";
+import { schemaVersion } from "./schema";
 
 export interface StaleReport {
+  schemaVersion: 1;
   isStale: boolean;
   indexedAt: string | null;
   reasons: string[];
@@ -28,6 +30,7 @@ export async function analyzeStaleIndex(
   const indexedAt = readIndexCreatedAt(db);
   if (!indexedAt || files.length === 0) {
     return {
+      schemaVersion,
       isStale: true,
       indexedAt,
       reasons: ["No indexed files found. Run ctx index."],
@@ -66,6 +69,7 @@ export async function analyzeStaleIndex(
   }
 
   return {
+    schemaVersion,
     isStale: reasons.size > 0,
     indexedAt,
     reasons: [...reasons],
