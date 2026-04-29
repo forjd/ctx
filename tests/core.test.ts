@@ -165,7 +165,10 @@ describe("scanner", () => {
   });
 
   test("extracts Ruby classes and methods", () => {
-    const symbols = extractSymbols("app/models/account.rb", "class Account\n  def active?\n  end\nend\n");
+    const symbols = extractSymbols(
+      "app/models/account.rb",
+      "class Account\n  def active?\n  end\nend\n",
+    );
     expect(symbols.map((symbol) => symbol.name)).toContain("Account");
     expect(symbols.map((symbol) => symbol.name)).toContain("active?");
   });
