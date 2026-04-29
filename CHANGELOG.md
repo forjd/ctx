@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.1.0](https://github.com/forjd/ctx/compare/ctx-v1.0.0...ctx-v1.1.0) (2026-04-29)
+
+
+### Features
+
+* add Astro framework support ([ebec889](https://github.com/forjd/ctx/commit/ebec889e9446d069fc4c73108b9733e2550cb349))
+* add context pack modes ([788457c](https://github.com/forjd/ctx/commit/788457c72a895b5e9a08f70c3be6bbffe5940cbc))
+* add diff-aware context packs ([77c25d9](https://github.com/forjd/ctx/commit/77c25d9cf5278aae888788ad5f2c8e7182a4b101))
+* add Django framework support ([6badaf5](https://github.com/forjd/ctx/commit/6badaf5a5f92595e349729271a2022a60b4a3bed))
+* add file explain command ([ca9987b](https://github.com/forjd/ctx/commit/ca9987b198723f79c8714f9a89dbd14b6bd38a97))
+* add NestJS framework support ([6cd9b07](https://github.com/forjd/ctx/commit/6cd9b078a8423f4f324dadb9edcc8ef71c00ebc8))
+* add Node HTTP framework support ([a874aa3](https://github.com/forjd/ctx/commit/a874aa33c0ac15a37483f4f3cd27bd7fbe1455c3))
+* add Nuxt framework support ([1b3152c](https://github.com/forjd/ctx/commit/1b3152ca6346bbf8e8b8b657824c82ddf679fbcd))
+* add Rails framework support ([2974c41](https://github.com/forjd/ctx/commit/2974c413a75d09190fd8f405fec24375e986e3e2))
+* add Remix and React Router support ([74c8b72](https://github.com/forjd/ctx/commit/74c8b72c6f3fb019ff0286afb2500eb9c66ff278))
+* add SvelteKit framework support ([6926ba4](https://github.com/forjd/ctx/commit/6926ba4a834a84d3d372b23433836473791621e0))
+* detect react and next projects ([26c5c80](https://github.com/forjd/ctx/commit/26c5c80b854f612027548dac80d1fb33e54d2680))
+* report stale indexes ([e4964ec](https://github.com/forjd/ctx/commit/e4964ec5439a42264f909ff368f4cb364338f377))
+* support configurable scoring ([684b2db](https://github.com/forjd/ctx/commit/684b2db49e1ef1814a3ec994243c7f6d6d3bf35a))
+* track dependency edges ([3c26d2e](https://github.com/forjd/ctx/commit/3c26d2ec5e87e436cdf0b323c13b1ef7a7c73a72))
+* version json schemas ([c21a1f0](https://github.com/forjd/ctx/commit/c21a1f035cd5f3edf41987241c6dfda387865b2d))
+
+
+### Bug Fixes
+
+* categorize root next pages ([7cf60a6](https://github.com/forjd/ctx/commit/7cf60a672e383d9dbb5eee0d30d1aa1a756ed8cc))
+* keep framework fixtures typecheckable ([a262761](https://github.com/forjd/ctx/commit/a2627613216d37909f4a4b7894da57d683768153))
+
 ## 1.0.0 (2026-04-29)
 
 
