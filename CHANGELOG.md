@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/forjd/ctx/compare/ctx-v1.2.0...ctx-v1.3.0) (2026-04-29)
+
+
+### Features
+
+* add ctx skill outcome variant ([f2264ab](https://github.com/forjd/ctx/commit/f2264ab5f04762e59ced4a156a5972dd3e742a26))
+
 ## [1.2.0](https://github.com/forjd/ctx/compare/ctx-v1.1.0...ctx-v1.2.0) (2026-04-29)
 
 
