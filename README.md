@@ -128,7 +128,7 @@ Best coverage:
 - Pest/PHPUnit-style test layouts
 - general Git repositories
 
-This is still an MVP. The goal is to prove that a small deterministic context engine can improve agent setup before code edits.
+The project remains intentionally small: a deterministic context engine that improves agent setup before code edits.
 
 ## Agent Skill
 
