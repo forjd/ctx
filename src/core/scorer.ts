@@ -27,6 +27,9 @@ const categoryBoosts: Record<string, string[]> = {
   route: ["route", "frontend-route"],
   routes: ["route", "frontend-route"],
   vue: ["frontend-page", "frontend-component"],
+  nuxt: ["frontend-route", "frontend-component", "frontend-layout", "frontend-composable"],
+  composable: ["frontend-composable"],
+  composables: ["frontend-composable"],
   svelte: ["frontend-route", "frontend-component", "frontend-layout"],
   sveltekit: ["frontend-route", "frontend-component", "frontend-layout"],
 };
@@ -210,6 +213,7 @@ export function broaderTestCommands(
   if (
     frameworks.includes("node") ||
     frameworks.includes("vue") ||
+    frameworks.includes("nuxt") ||
     frameworks.includes("svelte") ||
     frameworks.includes("sveltekit") ||
     frameworks.includes("typescript")

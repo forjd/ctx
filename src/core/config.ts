@@ -29,6 +29,7 @@ export function defaultConfig(): ProjectConfig {
       vue: true,
       react: true,
       next: true,
+      nuxt: true,
       svelte: true,
       sveltekit: true,
     },
