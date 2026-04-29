@@ -30,6 +30,8 @@ export function defaultConfig(): ProjectConfig {
       fastify: true,
       hono: true,
       nestjs: true,
+      remix: true,
+      reactRouter: true,
       vue: true,
       react: true,
       next: true,

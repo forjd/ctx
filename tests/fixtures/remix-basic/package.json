@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@remix-run/node": "^2.0.0",
+    "@remix-run/react": "^2.0.0",
+    "react-router": "^7.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0"
+  }
+}

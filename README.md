@@ -18,7 +18,7 @@ Coding agents are more useful when they start with the right context. `ctx` give
 
 It can:
 
-- detect Laravel, Vue, React, Next.js, Nuxt, SvelteKit, Node HTTP, NestJS, TypeScript, and Pest projects
+- detect Laravel, Vue, React, Next.js, Nuxt, SvelteKit, Node HTTP, NestJS, Remix, React Router, TypeScript, and Pest projects
 - index important files and lightweight symbols
 - infer project rules from config and docs
 - rank task-relevant files with reasons
@@ -141,6 +141,7 @@ Best coverage:
 - Svelte and SvelteKit frontends
 - Express, Fastify, and Hono services
 - NestJS applications
+- Remix and React Router applications
 - TypeScript and JavaScript projects
 - Pest/PHPUnit-style test layouts
 - general Git repositories

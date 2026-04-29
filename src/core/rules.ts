@@ -28,6 +28,12 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
     );
   if (project.frameworks.includes("nestjs"))
     add("Keep NestJS modules, controllers, and providers aligned.", "package.json", "high");
+  if (project.frameworks.includes("remix") || project.frameworks.includes("react-router"))
+    add(
+      "Use route modules under app/routes for Remix or React Router changes.",
+      "package.json",
+      "high",
+    );
   if (project.frameworks.includes("vue"))
     add("Use Vue components under resources/js or src/components.", "package.json", "high");
   if (project.frameworks.includes("react"))

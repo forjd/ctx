@@ -134,6 +134,8 @@ export function categorizeFile(path: string): FileCategory {
   if (/^(app|src\/app)\/(.*\/)?(page|layout)\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
   if (/^(pages|src\/pages)\/.+\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
   if (path.startsWith("pages/")) return "frontend-route";
+  if (path.startsWith("app/routes/")) return "frontend-route";
+  if (/^app\/root\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-layout";
   if (path.startsWith("layouts/")) return "frontend-layout";
   if (path.startsWith("components/")) return "frontend-component";
   if (path.startsWith("composables/")) return "frontend-composable";

@@ -16,6 +16,7 @@ const nodeHttpFixture = join(root, "tests/fixtures/node-http-basic");
 const vueFixture = join(root, "tests/fixtures/node-vue-basic");
 const nextFixture = join(root, "tests/fixtures/next-basic");
 const nuxtFixture = join(root, "tests/fixtures/nuxt-basic");
+const remixFixture = join(root, "tests/fixtures/remix-basic");
 const sveltekitFixture = join(root, "tests/fixtures/sveltekit-basic");
 
 describe("project detection", () => {
@@ -50,6 +51,13 @@ describe("project detection", () => {
     const project = await detectProject(nestFixture);
     expect(project.frameworks).toContain("node");
     expect(project.frameworks).toContain("nestjs");
+    expect(project.frameworks).toContain("typescript");
+  });
+
+  test("detects Remix and React Router from fixture", async () => {
+    const project = await detectProject(remixFixture);
+    expect(project.frameworks).toContain("remix");
+    expect(project.frameworks).toContain("react-router");
     expect(project.frameworks).toContain("typescript");
   });
 
@@ -96,6 +104,8 @@ describe("scanner", () => {
     expect(categorizeFile("layouts/default.vue")).toBe("frontend-layout");
     expect(categorizeFile("components/AccountSummary.vue")).toBe("frontend-component");
     expect(categorizeFile("composables/useAccount.ts")).toBe("frontend-composable");
+    expect(categorizeFile("app/routes/accounts.tsx")).toBe("frontend-route");
+    expect(categorizeFile("app/root.tsx")).toBe("frontend-layout");
     expect(categorizeFile("src/routes/dashboard/+page.svelte")).toBe("frontend-route");
     expect(categorizeFile("src/routes/+layout.svelte")).toBe("frontend-layout");
     expect(categorizeFile("src/lib/components/AccountCard.svelte")).toBe("frontend-component");

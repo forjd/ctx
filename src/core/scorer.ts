@@ -35,6 +35,8 @@ const categoryBoosts: Record<string, string[]> = {
   module: ["module"],
   provider: ["service", "module"],
   nestjs: ["module", "controller", "service", "test"],
+  remix: ["frontend-route", "frontend-layout"],
+  "react-router": ["frontend-route", "frontend-layout"],
   vue: ["frontend-page", "frontend-component"],
   nuxt: ["frontend-route", "frontend-component", "frontend-layout", "frontend-composable"],
   composable: ["frontend-composable"],
@@ -225,6 +227,8 @@ export function broaderTestCommands(
     frameworks.includes("fastify") ||
     frameworks.includes("hono") ||
     frameworks.includes("nestjs") ||
+    frameworks.includes("remix") ||
+    frameworks.includes("react-router") ||
     frameworks.includes("vue") ||
     frameworks.includes("nuxt") ||
     frameworks.includes("svelte") ||
