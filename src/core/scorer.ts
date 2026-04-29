@@ -32,6 +32,9 @@ const categoryBoosts: Record<string, string[]> = {
   express: ["api-route", "middleware", "schema"],
   fastify: ["api-route", "middleware", "schema"],
   hono: ["api-route", "middleware", "schema"],
+  module: ["module"],
+  provider: ["service", "module"],
+  nestjs: ["module", "controller", "service", "test"],
   vue: ["frontend-page", "frontend-component"],
   nuxt: ["frontend-route", "frontend-component", "frontend-layout", "frontend-composable"],
   composable: ["frontend-composable"],
@@ -221,6 +224,7 @@ export function broaderTestCommands(
     frameworks.includes("express") ||
     frameworks.includes("fastify") ||
     frameworks.includes("hono") ||
+    frameworks.includes("nestjs") ||
     frameworks.includes("vue") ||
     frameworks.includes("nuxt") ||
     frameworks.includes("svelte") ||

@@ -11,6 +11,7 @@ import { categorizeFile, extractSymbols, scanRepository } from "../src/core/scan
 
 const root = process.cwd();
 const laravelFixture = join(root, "tests/fixtures/laravel-basic");
+const nestFixture = join(root, "tests/fixtures/nest-basic");
 const nodeHttpFixture = join(root, "tests/fixtures/node-http-basic");
 const vueFixture = join(root, "tests/fixtures/node-vue-basic");
 const nextFixture = join(root, "tests/fixtures/next-basic");
@@ -45,6 +46,13 @@ describe("project detection", () => {
     expect(project.frameworks).toContain("hono");
   });
 
+  test("detects NestJS from fixture", async () => {
+    const project = await detectProject(nestFixture);
+    expect(project.frameworks).toContain("node");
+    expect(project.frameworks).toContain("nestjs");
+    expect(project.frameworks).toContain("typescript");
+  });
+
   test("detects Nuxt from fixture", async () => {
     const project = await detectProject(nuxtFixture);
     expect(project.frameworks).toContain("nuxt");
@@ -76,6 +84,9 @@ describe("scanner", () => {
     expect(categorizeFile("src/routes/accounts.ts")).toBe("api-route");
     expect(categorizeFile("src/middleware/requireAuth.ts")).toBe("middleware");
     expect(categorizeFile("src/schemas/accountSchema.ts")).toBe("schema");
+    expect(categorizeFile("src/accounts/accounts.module.ts")).toBe("module");
+    expect(categorizeFile("src/accounts/accounts.controller.ts")).toBe("controller");
+    expect(categorizeFile("src/accounts/accounts.service.ts")).toBe("service");
     expect(categorizeFile("resources/js/Pages/Dashboard.vue")).toBe("frontend-page");
     expect(categorizeFile("app/page.tsx")).toBe("frontend-page");
     expect(categorizeFile("app/account/page.tsx")).toBe("frontend-page");
@@ -128,6 +139,12 @@ describe("scanner", () => {
     expect(apiRoute?.dependencies).toContain("src/middleware/requireAuth.ts");
     expect(apiRoute?.dependencies).toContain("src/handlers/getAccount.ts");
     expect(apiRoute?.dependencies).toContain("src/schemas/accountSchema.ts");
+
+    const nestFiles = await scanRepository(nestFixture);
+    const controller = nestFiles.find(
+      (file) => file.path === "src/accounts/accounts.controller.ts",
+    );
+    expect(controller?.dependencies).toContain("src/accounts/accounts.service.ts");
 
     const svelteFiles = await scanRepository(sveltekitFixture);
     const route = svelteFiles.find((file) => file.path === "src/routes/dashboard/+page.svelte");

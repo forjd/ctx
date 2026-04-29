@@ -33,6 +33,8 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
   if (packageHas(packageRaw, "express")) frameworks.add("express");
   if (packageHas(packageRaw, "fastify")) frameworks.add("fastify");
   if (packageHas(packageRaw, "hono")) frameworks.add("hono");
+  if (packageHas(packageRaw, "@nestjs/core") || packageHas(packageRaw, "@nestjs/common"))
+    frameworks.add("nestjs");
   if (
     packageHas(packageRaw, "vue") ||
     packageHas(packageRaw, "nuxt") ||
@@ -138,6 +140,7 @@ function conventions(frameworks: Framework[]): string[] {
   if (frameworks.includes("express")) rules.push("Uses Express HTTP routes");
   if (frameworks.includes("fastify")) rules.push("Uses Fastify HTTP routes");
   if (frameworks.includes("hono")) rules.push("Uses Hono HTTP routes");
+  if (frameworks.includes("nestjs")) rules.push("Uses NestJS modules and providers");
   if (frameworks.includes("nuxt")) rules.push("Uses Nuxt routing and server conventions");
   if (frameworks.includes("svelte")) rules.push("Uses Svelte frontend");
   if (frameworks.includes("sveltekit")) rules.push("Uses SvelteKit routing");
