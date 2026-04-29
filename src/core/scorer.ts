@@ -61,7 +61,7 @@ export function taskTerms(task: string, config?: Partial<ScoringConfig>): string
     .split(/[^a-z0-9_-]+/)
     .filter((term) => term.length > 2 && !stopWords.has(term));
   const expanded = new Set(raw);
-  const synonyms = { ...synonymMap, ...(config?.synonyms ?? {}) };
+  const synonyms = { ...synonymMap, ...config?.synonyms };
   for (const term of raw) {
     expanded.add(term.replace(/[-_]/g, ""));
     expanded.add(term.replace(/[-_]/g, " "));
@@ -79,7 +79,7 @@ export function rankFiles(
   changedPaths: string[] = [],
 ): RankedFile[] {
   const terms = taskTerms(task, config);
-  const boosts = { ...categoryBoosts, ...(config?.categoryBoosts ?? {}) };
+  const boosts = { ...categoryBoosts, ...config?.categoryBoosts };
   const changed = new Set(changedPaths);
   const testDomainTerms = terms.filter(
     (term) => !["add", "update", "fix", "the", "for"].includes(term),
