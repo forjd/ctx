@@ -6,6 +6,7 @@ import { json, renderContextPack } from "../../core/output";
 import { detectProject } from "../../core/project";
 import { inferRules } from "../../core/rules";
 import { scanRepository } from "../../core/scanner";
+import { warnIfStale } from "../../core/stale";
 
 export async function packCommand(root: string, args: CliArgs): Promise<void> {
   const task = args.positionals.join(" ").trim();
@@ -15,6 +16,7 @@ export async function packCommand(root: string, args: CliArgs): Promise<void> {
   let files = readIndexedFiles(db);
   const project = await detectProject(root);
   let rules = readRules(db);
+  await warnIfStale(root, db, files);
   if (files.length === 0) files = await scanRepository(root);
   if (rules.length === 0) rules = await inferRules(root, project);
 

@@ -8,6 +8,7 @@ import { diffRiskCommand } from "./commands/diff-risk";
 import { handoffCommand } from "./commands/handoff";
 import { rulesCommand } from "./commands/rules";
 import { explainCommand } from "./commands/explain";
+import { staleCommand } from "./commands/stale";
 
 export interface CliArgs {
   command: string;
@@ -79,6 +80,9 @@ async function main(): Promise<void> {
     case "explain":
       await explainCommand(root, args);
       break;
+    case "stale":
+      await staleCommand(root, args);
+      break;
     case "help":
     default:
       printHelp();
@@ -97,6 +101,7 @@ Usage:
   ctx diff-risk [--json]
   ctx rules [--json]
   ctx explain <file> [--json]
+  ctx stale [--json]
   ctx handoff [--stdout|--json]
 `);
 }

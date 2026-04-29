@@ -16,19 +16,34 @@ afterEach(async () => {
 describe("cli commands", () => {
   test("explain prints file details from the real CLI", async () => {
     const fixture = await copyFixture("laravel-basic");
-    const result = Bun.spawnSync({
-      cmd: ["bun", "run", cli, "explain", "app/Jobs/SendSourceOfFundsReminderJob.php", "--json"],
-      cwd: fixture,
-      stdout: "pipe",
-      stderr: "pipe",
-    });
+    const result = runCli(fixture, [
+      "explain",
+      "app/Jobs/SendSourceOfFundsReminderJob.php",
+      "--json",
+    ]);
 
     expect(result.exitCode).toBe(0);
-    const payload = JSON.parse(new TextDecoder().decode(result.stdout));
+    const payload = JSON.parse(result.stdout);
     expect(payload.path).toBe("app/Jobs/SendSourceOfFundsReminderJob.php");
     expect(payload.category).toBe("job");
     expect(payload.dependencies).toContain("app/Models/SourceOfFundsRequest.php");
     expect(payload.relatedTests[0].path).toBe("tests/Feature/SourceOfFundsReminderTest.php");
+  });
+
+  test("stale reports missing and fresh indexes from the real CLI", async () => {
+    const fixture = await copyFixture("laravel-basic");
+    const missing = runCli(fixture, ["stale", "--json"]);
+    expect(missing.exitCode).toBe(0);
+    expect(JSON.parse(missing.stdout).isStale).toBe(true);
+
+    const index = runCli(fixture, ["index"]);
+    expect(index.exitCode).toBe(0);
+
+    const fresh = runCli(fixture, ["stale", "--json"]);
+    expect(fresh.exitCode).toBe(0);
+    const payload = JSON.parse(fresh.stdout);
+    expect(payload.isStale).toBe(false);
+    expect(typeof payload.indexedAt).toBe("string");
   });
 });
 
@@ -45,4 +60,18 @@ async function copyFixture(name: string): Promise<string> {
     throw new Error(new TextDecoder().decode(result.stderr));
   }
   return destination;
+}
+
+function runCli(cwd: string, args: string[]): { exitCode: number; stdout: string; stderr: string } {
+  const result = Bun.spawnSync({
+    cmd: ["bun", "run", cli, ...args],
+    cwd,
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  return {
+    exitCode: result.exitCode,
+    stdout: new TextDecoder().decode(result.stdout),
+    stderr: new TextDecoder().decode(result.stderr),
+  };
 }

@@ -5,6 +5,7 @@ import { json, renderFileExplanation } from "../../core/output";
 import { detectProject } from "../../core/project";
 import { inferRules } from "../../core/rules";
 import { scanRepository } from "../../core/scanner";
+import { warnIfStale } from "../../core/stale";
 
 export async function explainCommand(root: string, args: CliArgs): Promise<void> {
   const path = args.positionals[0];
@@ -13,6 +14,7 @@ export async function explainCommand(root: string, args: CliArgs): Promise<void>
   const db = await openDatabase(root);
   let files = readIndexedFiles(db);
   let rules = readRules(db);
+  await warnIfStale(root, db, files);
   db.close();
 
   if (files.length === 0) files = await scanRepository(root);

@@ -28,6 +28,10 @@ export async function currentBranch(root: string): Promise<string> {
   return (await gitText(["branch", "--show-current"], root)).trim() || "unknown";
 }
 
+export async function currentHead(root: string): Promise<string> {
+  return (await gitText(["rev-parse", "HEAD"], root)).trim();
+}
+
 export async function recentCommits(root: string): Promise<string[]> {
   return gitLines(["log", "--oneline", "-5"], root);
 }

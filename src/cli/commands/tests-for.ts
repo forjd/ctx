@@ -5,11 +5,13 @@ import { json, renderTests } from "../../core/output";
 import { detectProject } from "../../core/project";
 import { broaderTestCommands, recommendTests } from "../../core/scorer";
 import { scanRepository } from "../../core/scanner";
+import { warnIfStale } from "../../core/stale";
 
 export async function testsForCommand(root: string, args: CliArgs): Promise<void> {
   const project = await detectProject(root);
   const db = await openDatabase(root);
   let files = readIndexedFiles(db);
+  await warnIfStale(root, db, files);
   db.close();
   if (files.length === 0) files = await scanRepository(root);
 

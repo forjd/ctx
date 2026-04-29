@@ -71,6 +71,12 @@ export function migrate(db: Database): void {
       created_at text not null
     );
   `);
+  db.run(`
+    create table if not exists meta (
+      key text primary key,
+      value text not null
+    );
+  `);
 }
 
 export function replaceIndexedFiles(db: Database, files: IndexedFile[]): void {
@@ -210,4 +216,20 @@ export function readRules(db: Database): Rule[] {
     source: String(row.source ?? "inferred"),
     confidence: String(row.confidence ?? "medium") as Rule["confidence"],
   }));
+}
+
+export function setMeta(db: Database, key: string, value: string): void {
+  db.run("insert or replace into meta (key, value) values (?, ?)", [key, value]);
+}
+
+export function readMeta(db: Database, key: string): string | null {
+  const row = db.query("select value from meta where key = ?").get(key) as { value: string } | null;
+  return row?.value ?? null;
+}
+
+export function readIndexCreatedAt(db: Database): string | null {
+  const row = db.query("select max(indexed_at) as indexed_at from files").get() as {
+    indexed_at: string | null;
+  } | null;
+  return row?.indexed_at ?? null;
 }

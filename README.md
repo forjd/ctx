@@ -95,6 +95,7 @@ ctx pack "add retry handling for report exports" --json
 | `ctx diff-risk [--json]`  | Classify changed files and report risk signals.                           |
 | `ctx rules [--json]`      | Print inferred project rules.                                             |
 | `ctx explain <file>`      | Explain one indexed file's category, symbols, tests, and rules.           |
+| `ctx stale [--json]`      | Report whether the saved index is stale for files, config, or Git HEAD.   |
 | `ctx handoff`             | Write a Markdown handoff under `.ctx/handoffs/`.                          |
 
 Useful options:
