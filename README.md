@@ -36,6 +36,12 @@ bun install
 bun run ctx --help
 ```
 
+Or run the published Bun CLI:
+
+```bash
+bunx @forjd/ctx --help
+```
+
 Against another repository:
 
 ```bash

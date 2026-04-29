@@ -1,13 +1,37 @@
 {
-  "name": "ctx",
+  "name": "@forjd/ctx",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
+  "description": "Local context packs for coding agents.",
+  "keywords": [
+    "agents",
+    "bun",
+    "cli",
+    "code-context",
+    "context"
+  ],
+  "homepage": "https://github.com/forjd/ctx#readme",
+  "bugs": {
+    "url": "https://github.com/forjd/ctx/issues"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/forjd/ctx.git"
+  },
   "bin": {
     "ctx": "src/cli/index.ts"
   },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
   "type": "module",
   "module": "src/cli/index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "ctx": "bun run src/cli/index.ts",
     "dev": "bun run src/cli/index.ts",
@@ -29,5 +53,8 @@
     "oxlint": "^1.3.0",
     "typescript": "^5.9.3"
   },
-  "peerDependencies": {}
+  "peerDependencies": {},
+  "engines": {
+    "bun": ">=1.2.0"
+  }
 }

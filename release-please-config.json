@@ -2,7 +2,7 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "package-name": "ctx",
+      "package-name": "@forjd/ctx",
       "changelog-path": "CHANGELOG.md"
     }
   }
