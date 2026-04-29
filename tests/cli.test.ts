@@ -70,6 +70,15 @@ describe("cli commands", () => {
     expect(payload.files[0].path).toContain("SourceOfFunds");
     expect(payload.suggestedCommands).toContain("bun run custom:test");
   });
+
+  test("map detects Next from the real CLI", async () => {
+    const fixture = await copyFixture("next-basic");
+    const result = runCli(fixture, ["map", "--json"]);
+    expect(result.exitCode).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.frameworks).toContain("next");
+    expect(payload.frameworks).toContain("react");
+  });
 });
 
 async function copyFixture(name: string): Promise<string> {

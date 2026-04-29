@@ -36,6 +36,23 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
     frameworks.add("vue");
   }
   if (
+    packageRaw.includes('"react"') ||
+    existsSync(join(root, "src/App.tsx")) ||
+    existsSync(join(root, "src/App.jsx"))
+  ) {
+    frameworks.add("react");
+  }
+  if (
+    packageRaw.includes('"next"') ||
+    existsSync(join(root, "next.config.js")) ||
+    existsSync(join(root, "next.config.ts")) ||
+    existsSync(join(root, "app/page.tsx")) ||
+    existsSync(join(root, "src/app/page.tsx"))
+  ) {
+    frameworks.add("next");
+    frameworks.add("react");
+  }
+  if (
     existsSync(join(root, "tsconfig.json")) ||
     (await hasAnyFileWithExtension(root, ".ts")) ||
     (await hasAnyFileWithExtension(root, ".tsx"))
@@ -73,6 +90,9 @@ function importantDirectories(root: string): string[] {
     "tests/Feature",
     "resources/js",
     "src",
+    "app",
+    "pages",
+    "components",
   ].filter((path) => existsSync(join(root, path)));
 }
 
@@ -80,6 +100,8 @@ function conventions(frameworks: Framework[]): string[] {
   const rules: string[] = [];
   if (frameworks.includes("pest")) rules.push("Uses Pest tests");
   if (frameworks.includes("vue")) rules.push("Uses Vue frontend");
+  if (frameworks.includes("react")) rules.push("Uses React frontend");
+  if (frameworks.includes("next")) rules.push("Uses Next.js routing");
   if (frameworks.includes("laravel")) {
     rules.push("Uses Laravel migrations");
     rules.push("Uses Laravel application structure");

@@ -1,4 +1,4 @@
-export type Framework = "laravel" | "node" | "vue" | "typescript" | "pest";
+export type Framework = "laravel" | "node" | "vue" | "react" | "next" | "typescript" | "pest";
 
 export type FileCategory =
   | "model"
@@ -19,6 +19,8 @@ export type FileCategory =
   | "config"
   | "frontend-page"
   | "frontend-component"
+  | "frontend-hook"
+  | "api-route"
   | "enum"
   | "unknown";
 
@@ -31,6 +33,8 @@ export interface ProjectConfig {
     laravel: boolean;
     node: boolean;
     vue: boolean;
+    react: boolean;
+    next: boolean;
   };
   scoring: ScoringConfig;
 }

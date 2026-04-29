@@ -120,9 +120,14 @@ export function categorizeFile(path: string): FileCategory {
   if (path.startsWith("tests/Unit/")) return "unit-test";
   if (path.startsWith("routes/")) return "route";
   if (path.startsWith("config/")) return "config";
+  if (/^(app|src\/app)\/api\/.+\/route\.(ts|tsx|js|jsx)$/.test(path)) return "api-route";
+  if (/^(app|src\/app)\/.+(page|layout)\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
+  if (/^(pages|src\/pages)\/.+\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
   if (path.startsWith("resources/js/Pages/")) return "frontend-page";
   if (path.startsWith("resources/js/Components/") || path.startsWith("src/components/"))
     return "frontend-component";
+  if (/^(components|src\/components)\/.+\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-component";
+  if (/^(hooks|src\/hooks)\/use[A-Z].*\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-hook";
   if (isTestPath(path)) return "test";
   return "unknown";
 }
@@ -157,6 +162,7 @@ function extractTypeScriptSymbols(content: string): SymbolInfo[] {
   const lines = content.split("\n");
   const patterns = [
     /\bexport\s+class\s+([A-Za-z_][A-Za-z0-9_]*)/,
+    /\bexport\s+default\s+function\s+([A-Za-z_][A-Za-z0-9_]*)/,
     /\bexport\s+function\s+([A-Za-z_][A-Za-z0-9_]*)/,
     /\bfunction\s+([A-Za-z_][A-Za-z0-9_]*)/,
     /\binterface\s+([A-Za-z_][A-Za-z0-9_]*)/,

@@ -27,6 +27,8 @@ export function defaultConfig(): ProjectConfig {
       laravel: true,
       node: true,
       vue: true,
+      react: true,
+      next: true,
     },
     scoring: {
       synonyms: {},

@@ -12,6 +12,7 @@ import { categorizeFile, extractSymbols, scanRepository } from "../src/core/scan
 const root = process.cwd();
 const laravelFixture = join(root, "tests/fixtures/laravel-basic");
 const vueFixture = join(root, "tests/fixtures/node-vue-basic");
+const nextFixture = join(root, "tests/fixtures/next-basic");
 
 describe("project detection", () => {
   test("detects Laravel from fixture", async () => {
@@ -23,6 +24,13 @@ describe("project detection", () => {
   test("detects Vue from fixture", async () => {
     const project = await detectProject(vueFixture);
     expect(project.frameworks).toContain("vue");
+    expect(project.frameworks).toContain("typescript");
+  });
+
+  test("detects React and Next from fixture", async () => {
+    const project = await detectProject(nextFixture);
+    expect(project.frameworks).toContain("react");
+    expect(project.frameworks).toContain("next");
     expect(project.frameworks).toContain("typescript");
   });
 });
@@ -41,6 +49,9 @@ describe("scanner", () => {
     expect(categorizeFile("app/Jobs/SendEmail.php")).toBe("job");
     expect(categorizeFile("database/migrations/create_users.php")).toBe("migration");
     expect(categorizeFile("resources/js/Pages/Dashboard.vue")).toBe("frontend-page");
+    expect(categorizeFile("app/account/page.tsx")).toBe("frontend-page");
+    expect(categorizeFile("app/api/accounts/route.ts")).toBe("api-route");
+    expect(categorizeFile("src/hooks/useAccount.ts")).toBe("frontend-hook");
   });
 
   test("extracts PHP classes and enums", () => {
@@ -71,6 +82,10 @@ describe("scanner", () => {
     const vueFiles = await scanRepository(vueFixture);
     const component = vueFiles.find((file) => file.path === "src/components/AccountSummary.vue");
     expect(component?.dependencies).toContain("src/context.ts");
+
+    const nextFiles = await scanRepository(nextFixture);
+    const page = nextFiles.find((file) => file.path === "app/page.tsx");
+    expect(page?.dependencies).toContain("components/AccountCard.tsx");
   });
 });
 

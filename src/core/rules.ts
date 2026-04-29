@@ -18,6 +18,10 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
   }
   if (project.frameworks.includes("vue"))
     add("Use Vue components under resources/js or src/components.", "package.json", "high");
+  if (project.frameworks.includes("react"))
+    add("Use React components for frontend UI changes.", "package.json", "medium");
+  if (project.frameworks.includes("next"))
+    add("Respect Next.js app or pages routing conventions.", "package.json", "high");
   if (project.frameworks.includes("typescript"))
     add(
       "Respect the TypeScript configuration before changing typed code.",
