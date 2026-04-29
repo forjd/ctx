@@ -20,6 +20,7 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
   const gemfile = join(root, "Gemfile");
   const requirements = join(root, "requirements.txt");
   const pyproject = join(root, "pyproject.toml");
+  const goMod = join(root, "go.mod");
   const packageRaw = existsSync(packageJson) ? await readFile(packageJson, "utf8") : "";
 
   if (
@@ -90,6 +91,7 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
     (await fileContains(join(root, "wsgi.py"), "Flask"))
   )
     frameworks.add("flask");
+  if (existsSync(goMod) || (await hasAnyFileWithExtension(root, ".go"))) frameworks.add("go");
   if (
     packageHas(packageRaw, "vue") ||
     packageHas(packageRaw, "nuxt") ||
@@ -181,6 +183,9 @@ function importantDirectories(root: string): string[] {
     "app/api",
     "app/routers",
     "app/blueprints",
+    "cmd",
+    "internal",
+    "pkg",
     "app/Jobs",
     "app/Notifications",
     "database/migrations",
@@ -214,6 +219,7 @@ function conventions(frameworks: Framework[]): string[] {
   if (frameworks.includes("django")) rules.push("Uses Django application conventions");
   if (frameworks.includes("fastapi")) rules.push("Uses FastAPI route and dependency conventions");
   if (frameworks.includes("flask")) rules.push("Uses Flask route and blueprint conventions");
+  if (frameworks.includes("go")) rules.push("Uses Go packages and tests");
   if (frameworks.includes("nuxt")) rules.push("Uses Nuxt routing and server conventions");
   if (frameworks.includes("svelte")) rules.push("Uses Svelte frontend");
   if (frameworks.includes("sveltekit")) rules.push("Uses SvelteKit routing");

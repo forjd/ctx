@@ -18,7 +18,7 @@ Coding agents are more useful when they start with the right context. `ctx` give
 
 It can:
 
-- detect Laravel, Symfony, Rails, Django, FastAPI, Flask, Vue, React, Next.js, Nuxt, SvelteKit, Node HTTP, NestJS, Remix, React Router, Astro, TypeScript, and Pest projects
+- detect Laravel, Symfony, Rails, Django, FastAPI, Flask, Go, Vue, React, Next.js, Nuxt, SvelteKit, Node HTTP, NestJS, Remix, React Router, Astro, TypeScript, and Pest projects
 - index important files and lightweight symbols
 - infer project rules from config and docs
 - rank task-relevant files with reasons
@@ -140,6 +140,7 @@ Best coverage:
 - Django apps
 - FastAPI apps
 - Flask apps
+- Go projects
 - Vue frontends
 - React and Next.js frontends
 - Nuxt applications

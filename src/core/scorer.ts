@@ -229,6 +229,7 @@ export function broaderTestCommands(
   if (frameworks.includes("django")) commands.add("python manage.py test");
   if (frameworks.includes("fastapi")) commands.add("pytest");
   if (frameworks.includes("flask")) commands.add("pytest");
+  if (frameworks.includes("go")) commands.add("go test ./...");
   if (packageScripts.includes("test")) commands.add("bun test");
   if (
     frameworks.includes("node") ||
@@ -255,6 +256,7 @@ function testCommand(path: string): string {
   if (path.endsWith(".rb") && path.startsWith("spec/")) return `bundle exec rspec ${path}`;
   if (path.endsWith(".rb")) return `bin/rails test ${path}`;
   if (path.endsWith(".py")) return `python manage.py test ${path}`;
+  if (path.endsWith("_test.go")) return "go test ./...";
   return `bun test ${path}`;
 }
 

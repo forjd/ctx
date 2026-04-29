@@ -14,6 +14,7 @@ const astroFixture = join(root, "tests/fixtures/astro-basic");
 const djangoFixture = join(root, "tests/fixtures/django-basic");
 const fastapiFixture = join(root, "tests/fixtures/fastapi-basic");
 const flaskFixture = join(root, "tests/fixtures/flask-basic");
+const goFixture = join(root, "tests/fixtures/go-basic");
 const laravelFixture = join(root, "tests/fixtures/laravel-basic");
 const symfonyFixture = join(root, "tests/fixtures/symfony-basic");
 const nestFixture = join(root, "tests/fixtures/nest-basic");
@@ -102,6 +103,12 @@ describe("project detection", () => {
     expect(project.importantDirectories).toContain("app/blueprints");
   });
 
+  test("detects Go from fixture", async () => {
+    const project = await detectProject(goFixture);
+    expect(project.frameworks).toContain("go");
+    expect(project.importantDirectories).toContain("internal");
+  });
+
   test("detects Nuxt from fixture", async () => {
     const project = await detectProject(nuxtFixture);
     expect(project.frameworks).toContain("nuxt");
@@ -148,6 +155,10 @@ describe("scanner", () => {
     expect(categorizeFile("api/accounts.py")).toBe("api-route");
     expect(categorizeFile("app/blueprints/accounts.py")).toBe("route");
     expect(categorizeFile("blueprints/accounts.py")).toBe("route");
+    expect(categorizeFile("internal/accounts/models/account.go")).toBe("model");
+    expect(categorizeFile("internal/accounts/handlers/accounts.go")).toBe("controller");
+    expect(categorizeFile("internal/http/middleware/auth.go")).toBe("middleware");
+    expect(categorizeFile("pkg/accounts/services/exporter.go")).toBe("service");
     expect(categorizeFile("demo/settings.py")).toBe("config");
     expect(categorizeFile("accounts/migrations/0001_initial.py")).toBe("migration");
     expect(categorizeFile("accounts/tests.py")).toBe("test");
@@ -209,6 +220,15 @@ describe("scanner", () => {
     );
     expect(symbols.map((symbol) => symbol.name)).toContain("Account");
     expect(symbols.map((symbol) => symbol.name)).toContain("is_active");
+  });
+
+  test("extracts Go functions and types", () => {
+    const symbols = extractSymbols(
+      "internal/accounts/handlers/accounts.go",
+      "package handlers\n\ntype AccountHandler struct {}\nfunc ListAccounts() {}\n",
+    );
+    expect(symbols.map((symbol) => symbol.name)).toContain("AccountHandler");
+    expect(symbols.map((symbol) => symbol.name)).toContain("ListAccounts");
   });
 
   test("resolves local dependency edges", async () => {

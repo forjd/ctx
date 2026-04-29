@@ -38,6 +38,7 @@ export function defaultConfig(): ProjectConfig {
       django: true,
       fastapi: true,
       flask: true,
+      go: true,
       vue: true,
       react: true,
       next: true,

@@ -68,6 +68,10 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
     add("Keep Flask routes, blueprints, and app setup explicit.", "pyproject.toml", "high");
     add("Run pytest for Flask changes.", "pyproject.toml", "medium");
   }
+  if (project.frameworks.includes("go")) {
+    add("Keep Go packages small and test package behaviour with go test.", "go.mod", "high");
+    add("Run go test ./... for Go changes.", "go.mod", "medium");
+  }
   if (project.frameworks.includes("vue"))
     add("Use Vue components under resources/js or src/components.", "package.json", "high");
   if (project.frameworks.includes("react"))

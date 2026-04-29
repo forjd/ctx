@@ -136,6 +136,10 @@ export function categorizeFile(path: string): FileCategory {
   if (path.endsWith("/urls.py")) return "route";
   if (/^(app\/)?(api|routers)\//.test(path) && path.endsWith(".py")) return "api-route";
   if (/^(app\/)?blueprints\//.test(path) && path.endsWith(".py")) return "route";
+  if (/^(internal|pkg)\/.*\/models?\//.test(path) && path.endsWith(".go")) return "model";
+  if (/^(internal|pkg)\/.*\/handlers?\//.test(path) && path.endsWith(".go")) return "controller";
+  if (/^(internal|pkg)\/.*\/middleware\//.test(path) && path.endsWith(".go")) return "middleware";
+  if (/^(internal|pkg)\/.*\/services?\//.test(path) && path.endsWith(".go")) return "service";
   if (path.endsWith("/models.py")) return "model";
   if (path.endsWith("/views.py")) return "controller";
   if (path.endsWith("/forms.py")) return "request";
@@ -183,6 +187,7 @@ export function extractSymbols(path: string, content: string): SymbolInfo[] {
   if (path.endsWith(".php")) return extractPhpSymbols(content);
   if (path.endsWith(".rb")) return extractRubySymbols(content);
   if (path.endsWith(".py")) return extractPythonSymbols(content);
+  if (path.endsWith(".go")) return extractGoSymbols(content);
   if (/\.(ts|tsx|js|jsx|vue|svelte|astro)$/.test(path)) return extractTypeScriptSymbols(content);
   return [];
 }
@@ -227,6 +232,25 @@ function extractPythonSymbols(content: string): SymbolInfo[] {
     const match = line.match(pattern);
     if (match?.[1] && match[2]) {
       symbols.push({ kind: match[1], name: match[2], lineStart: index + 1 });
+    }
+  });
+  return symbols;
+}
+
+function extractGoSymbols(content: string): SymbolInfo[] {
+  const symbols: SymbolInfo[] = [];
+  const lines = content.split("\n");
+  const patterns = [
+    /^\s*func\s+(?:\([^)]+\)\s*)?([A-Za-z_][A-Za-z0-9_]*)\s*\(/,
+    /^\s*type\s+([A-Za-z_][A-Za-z0-9_]*)\s+(struct|interface)\b/,
+  ];
+  lines.forEach((line, index) => {
+    for (const pattern of patterns) {
+      const match = line.match(pattern);
+      if (match?.[1]) {
+        symbols.push({ kind: match[2] ?? "function", name: match[1], lineStart: index + 1 });
+        break;
+      }
     }
   });
   return symbols;
@@ -339,6 +363,7 @@ function languageFor(extension: string, path: string): string {
   if (extension === ".php") return "php";
   if (extension === ".rb") return "ruby";
   if (extension === ".py") return "python";
+  if (extension === ".go") return "go";
   if (extension === ".vue") return "vue";
   if (extension === ".svelte") return "svelte";
   if (extension === ".astro") return "astro";
@@ -355,6 +380,7 @@ function isTestPath(path: string): boolean {
     path.startsWith("spec/") ||
     /^test\/.*_test\.rb$/.test(path) ||
     path.endsWith("/tests.py") ||
+    path.endsWith("_test.go") ||
     /(^|\/)test_[^/]+\.py$/.test(path) ||
     /\.(test|spec)\.(ts|tsx|js|jsx)$/.test(path) ||
     path.endsWith("Test.php")
