@@ -22,6 +22,14 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
     add("Use React components for frontend UI changes.", "package.json", "medium");
   if (project.frameworks.includes("next"))
     add("Respect Next.js app or pages routing conventions.", "package.json", "high");
+  if (project.frameworks.includes("svelte"))
+    add(
+      "Use Svelte components under src/lib/components or framework routes.",
+      "package.json",
+      "high",
+    );
+  if (project.frameworks.includes("sveltekit"))
+    add("Use SvelteKit route conventions under src/routes.", "svelte.config", "high");
   if (project.frameworks.includes("typescript"))
     add(
       "Respect the TypeScript configuration before changing typed code.",

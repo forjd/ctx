@@ -13,6 +13,7 @@ const root = process.cwd();
 const laravelFixture = join(root, "tests/fixtures/laravel-basic");
 const vueFixture = join(root, "tests/fixtures/node-vue-basic");
 const nextFixture = join(root, "tests/fixtures/next-basic");
+const sveltekitFixture = join(root, "tests/fixtures/sveltekit-basic");
 
 describe("project detection", () => {
   test("detects Laravel from fixture", async () => {
@@ -31,6 +32,13 @@ describe("project detection", () => {
     const project = await detectProject(nextFixture);
     expect(project.frameworks).toContain("react");
     expect(project.frameworks).toContain("next");
+    expect(project.frameworks).toContain("typescript");
+  });
+
+  test("detects SvelteKit from fixture", async () => {
+    const project = await detectProject(sveltekitFixture);
+    expect(project.frameworks).toContain("svelte");
+    expect(project.frameworks).toContain("sveltekit");
     expect(project.frameworks).toContain("typescript");
   });
 });
@@ -53,6 +61,9 @@ describe("scanner", () => {
     expect(categorizeFile("app/account/page.tsx")).toBe("frontend-page");
     expect(categorizeFile("app/api/accounts/route.ts")).toBe("api-route");
     expect(categorizeFile("src/hooks/useAccount.ts")).toBe("frontend-hook");
+    expect(categorizeFile("src/routes/dashboard/+page.svelte")).toBe("frontend-route");
+    expect(categorizeFile("src/routes/+layout.svelte")).toBe("frontend-layout");
+    expect(categorizeFile("src/lib/components/AccountCard.svelte")).toBe("frontend-component");
   });
 
   test("extracts PHP classes and enums", () => {
@@ -87,6 +98,10 @@ describe("scanner", () => {
     const nextFiles = await scanRepository(nextFixture);
     const page = nextFiles.find((file) => file.path === "app/page.tsx");
     expect(page?.dependencies).toContain("components/AccountCard.tsx");
+
+    const svelteFiles = await scanRepository(sveltekitFixture);
+    const route = svelteFiles.find((file) => file.path === "src/routes/dashboard/+page.svelte");
+    expect(route?.language).toBe("svelte");
   });
 });
 

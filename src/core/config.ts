@@ -29,6 +29,8 @@ export function defaultConfig(): ProjectConfig {
       vue: true,
       react: true,
       next: true,
+      svelte: true,
+      sveltekit: true,
     },
     scoring: {
       synonyms: {},

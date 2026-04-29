@@ -24,7 +24,11 @@ const categoryBoosts: Record<string, string[]> = {
   policy: ["policy", "feature-test"],
   controller: ["controller", "route", "feature-test"],
   frontend: ["frontend-page", "frontend-component"],
+  route: ["route", "frontend-route"],
+  routes: ["route", "frontend-route"],
   vue: ["frontend-page", "frontend-component"],
+  svelte: ["frontend-route", "frontend-component", "frontend-layout"],
+  sveltekit: ["frontend-route", "frontend-component", "frontend-layout"],
 };
 
 const stopWords = new Set([
@@ -206,6 +210,8 @@ export function broaderTestCommands(
   if (
     frameworks.includes("node") ||
     frameworks.includes("vue") ||
+    frameworks.includes("svelte") ||
+    frameworks.includes("sveltekit") ||
     frameworks.includes("typescript")
   )
     commands.add("bun test");

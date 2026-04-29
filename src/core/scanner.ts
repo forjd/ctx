@@ -123,8 +123,16 @@ export function categorizeFile(path: string): FileCategory {
   if (/^(app|src\/app)\/api\/.+\/route\.(ts|tsx|js|jsx)$/.test(path)) return "api-route";
   if (/^(app|src\/app)\/(.*\/)?(page|layout)\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
   if (/^(pages|src\/pages)\/.+\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
+  if (path.startsWith("src/routes/")) {
+    if (/\/\+layout\.(svelte|ts|js)$/.test(path)) return "frontend-layout";
+    return "frontend-route";
+  }
   if (path.startsWith("resources/js/Pages/")) return "frontend-page";
-  if (path.startsWith("resources/js/Components/") || path.startsWith("src/components/"))
+  if (
+    path.startsWith("resources/js/Components/") ||
+    path.startsWith("src/components/") ||
+    path.startsWith("src/lib/components/")
+  )
     return "frontend-component";
   if (/^(components|src\/components)\/.+\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-component";
   if (/^(hooks|src\/hooks)\/use[A-Z].*\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-hook";
@@ -134,12 +142,12 @@ export function categorizeFile(path: string): FileCategory {
 
 export function extractSymbols(path: string, content: string): SymbolInfo[] {
   if (path.endsWith(".php")) return extractPhpSymbols(content);
-  if (/\.(ts|tsx|js|jsx|vue)$/.test(path)) return extractTypeScriptSymbols(content);
+  if (/\.(ts|tsx|js|jsx|vue|svelte)$/.test(path)) return extractTypeScriptSymbols(content);
   return [];
 }
 
 export function extractImportSpecifiers(path: string, content: string): string[] {
-  if (/\.(ts|tsx|js|jsx|vue)$/.test(path)) return extractTypeScriptImports(content);
+  if (/\.(ts|tsx|js|jsx|vue|svelte)$/.test(path)) return extractTypeScriptImports(content);
   if (path.endsWith(".php")) return extractPhpImports(content);
   return [];
 }
@@ -227,11 +235,13 @@ function resolveRelativeImport(path: string, specifier: string, paths: Set<strin
     `${base}.js`,
     `${base}.jsx`,
     `${base}.vue`,
+    `${base}.svelte`,
     `${base}/index.ts`,
     `${base}/index.tsx`,
     `${base}/index.js`,
     `${base}/index.jsx`,
     `${base}/index.vue`,
+    `${base}/index.svelte`,
   ];
   return candidates.find((candidate) => paths.has(candidate)) ?? null;
 }
@@ -259,6 +269,7 @@ function symbolKind(pattern: RegExp): string {
 function languageFor(extension: string, path: string): string {
   if (extension === ".php") return "php";
   if (extension === ".vue") return "vue";
+  if (extension === ".svelte") return "svelte";
   if (extension === ".ts" || extension === ".tsx") return "typescript";
   if (extension === ".js" || extension === ".jsx") return "javascript";
   if (extension === ".json") return "json";
