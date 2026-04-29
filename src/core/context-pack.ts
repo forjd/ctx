@@ -17,6 +17,7 @@ export interface ContextPackOptions {
   ruleLimit: number;
   edgeLimit: number;
   includeSymbols: boolean;
+  changedPaths: string[];
 }
 
 const defaultPackOptions: ContextPackOptions = {
@@ -25,6 +26,7 @@ const defaultPackOptions: ContextPackOptions = {
   ruleLimit: 8,
   edgeLimit: 24,
   includeSymbols: false,
+  changedPaths: [],
 };
 
 export async function buildContextPack(
@@ -37,7 +39,14 @@ export async function buildContextPack(
   options: Partial<ContextPackOptions> = {},
 ): Promise<{ pack: ContextPack; history: string[] }> {
   const packOptions = { ...defaultPackOptions, ...options };
-  const ranked = rankFiles(files, task, scoring, packOptions.fileLimit, packOptions.includeSymbols);
+  const ranked = rankFiles(
+    files,
+    task,
+    scoring,
+    packOptions.fileLimit,
+    packOptions.includeSymbols,
+    packOptions.changedPaths,
+  );
   const targetPaths = ranked.map((file) => file.path);
   const tests = recommendTests(files, targetPaths).slice(0, packOptions.testLimit);
   const history = await gitHistoryForTerms(root, taskTerms(task, scoring).slice(0, 6));
@@ -54,6 +63,7 @@ export async function buildContextPack(
       frameworks: project.frameworks,
     },
     files: ranked,
+    changedFiles: packOptions.changedPaths.length ? packOptions.changedPaths : undefined,
     tests,
     rules: rules.slice(0, packOptions.ruleLimit),
     risks: riskNotes(

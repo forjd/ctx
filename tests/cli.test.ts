@@ -103,6 +103,32 @@ describe("cli commands", () => {
     ]);
     expect(JSON.parse(limited.stdout).files).toHaveLength(2);
   });
+
+  test("pack changed uses the real Git diff from the real CLI", async () => {
+    const fixture = await copyFixture("laravel-basic");
+    runCommand(fixture, ["git", "init"]);
+    runCommand(fixture, ["git", "add", "."]);
+    runCommand(fixture, [
+      "git",
+      "-c",
+      "user.name=ctx",
+      "-c",
+      "user.email=ctx@example.com",
+      "commit",
+      "-m",
+      "test fixture",
+    ]);
+    await writeFile(
+      join(fixture, "app/Models/SourceOfFundsRequest.php"),
+      "<?php\n\nnamespace App\\Models;\n\nclass SourceOfFundsRequest\n{\n    public bool $changed = true;\n}\n",
+    );
+
+    const result = runCli(fixture, ["pack", "update request lifecycle", "--changed", "--json"]);
+    expect(result.exitCode).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.changedFiles).toContain("app/Models/SourceOfFundsRequest.php");
+    expect(payload.files[0].path).toBe("app/Models/SourceOfFundsRequest.php");
+  });
 });
 
 async function copyFixture(name: string): Promise<string> {
@@ -121,8 +147,15 @@ async function copyFixture(name: string): Promise<string> {
 }
 
 function runCli(cwd: string, args: string[]): { exitCode: number; stdout: string; stderr: string } {
+  return runCommand(cwd, ["bun", "run", cli, ...args]);
+}
+
+function runCommand(
+  cwd: string,
+  cmd: string[],
+): { exitCode: number; stdout: string; stderr: string } {
   const result = Bun.spawnSync({
-    cmd: ["bun", "run", cli, ...args],
+    cmd,
     cwd,
     stdout: "pipe",
     stderr: "pipe",

@@ -102,6 +102,7 @@ Useful options:
 
 ```bash
 ctx pack "task" --json
+ctx pack "task" --changed --json
 ctx pack "task" --markdown
 ctx pack "task" --small
 ctx pack "task" --full --include-symbols

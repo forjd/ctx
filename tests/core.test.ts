@@ -112,6 +112,15 @@ describe("context pack behaviours", () => {
     );
   });
 
+  test("boosts files changed in the current diff", async () => {
+    const files = await scanRepository(laravelFixture);
+    const ranked = rankFiles(files, "update request lifecycle", undefined, 12, false, [
+      "app/Models/SourceOfFundsRequest.php",
+    ]);
+    expect(ranked[0]?.path).toBe("app/Models/SourceOfFundsRequest.php");
+    expect(ranked[0]?.reason).toContain("changed in current Git diff");
+  });
+
   test("tests-for finds direct filename matches", async () => {
     const files = await scanRepository(laravelFixture);
     const tests = recommendTests(files, ["app/Jobs/SendSourceOfFundsReminderJob.php"]);

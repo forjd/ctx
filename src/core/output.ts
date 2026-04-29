@@ -84,6 +84,9 @@ export function renderContextPack(pack: ContextPack, history: string[] = []): st
         : []),
       "",
     ]),
+    ...(pack.changedFiles?.length
+      ? ["## Changed files", "", ...bullets(pack.changedFiles), ""]
+      : []),
     "## Relevant tests",
     "",
     ...bullets(

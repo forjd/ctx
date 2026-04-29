@@ -3,6 +3,7 @@ import type { CliArgs } from "../index";
 import { buildContextPack, savePack } from "../../core/context-pack";
 import { readConfig } from "../../core/config";
 import { openDatabase, readIndexedFiles, readRules } from "../../core/db";
+import { changedFiles } from "../../core/git";
 import { json, renderContextPack } from "../../core/output";
 import { detectProject } from "../../core/project";
 import { inferRules } from "../../core/rules";
@@ -22,6 +23,7 @@ export async function packCommand(root: string, args: CliArgs): Promise<void> {
   if (files.length === 0) files = await scanRepository(root);
   if (rules.length === 0) rules = await inferRules(root, project);
 
+  const changedPaths = args.flags.has("changed") ? await changedFiles(root) : [];
   const { pack, history } = await buildContextPack(
     root,
     task,
@@ -29,7 +31,7 @@ export async function packCommand(root: string, args: CliArgs): Promise<void> {
     files,
     rules,
     config.scoring,
-    packOptions(args),
+    { ...packOptions(args), changedPaths },
   );
   const markdown = renderContextPack(pack, history);
   const output = args.flags.has("json") ? json(pack) : markdown;

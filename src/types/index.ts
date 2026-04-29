@@ -113,6 +113,7 @@ export interface ContextPack {
     frameworks: Framework[];
   };
   files: RankedFile[];
+  changedFiles?: string[];
   tests: TestRecommendation[];
   rules: Rule[];
   risks: RiskNote[];

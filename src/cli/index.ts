@@ -96,7 +96,7 @@ Usage:
   ctx init
   ctx index
   ctx map [--json]
-  ctx pack <task> [--json|--markdown] [--small|--full] [--files n] [--include-symbols] [--output path]
+  ctx pack <task> [--json|--markdown] [--changed] [--small|--full] [--files n] [--include-symbols] [--output path]
   ctx tests-for <file|--changed>
   ctx diff-risk [--json]
   ctx rules [--json]

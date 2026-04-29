@@ -76,9 +76,11 @@ export function rankFiles(
   config?: Partial<ScoringConfig>,
   limit = 12,
   includeSymbols = false,
+  changedPaths: string[] = [],
 ): RankedFile[] {
   const terms = taskTerms(task, config);
   const boosts = { ...categoryBoosts, ...(config?.categoryBoosts ?? {}) };
+  const changed = new Set(changedPaths);
   const testDomainTerms = terms.filter(
     (term) => !["add", "update", "fix", "the", "for"].includes(term),
   );
@@ -103,6 +105,11 @@ export function rankFiles(
       if (pathMatches.length) {
         score += pathMatches.length * 20;
         reasons.push(`path matches ${joinShort(pathMatches)}`);
+      }
+
+      if (changed.has(file.path)) {
+        score += 40;
+        reasons.push("changed in current Git diff");
       }
 
       const symbolMatches = file.symbols.filter((symbol) =>
