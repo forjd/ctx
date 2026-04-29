@@ -1,6 +1,7 @@
 # ctx
 
 [![CI](https://github.com/forjd/ctx/actions/workflows/ci.yml/badge.svg)](https://github.com/forjd/ctx/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/@forjd/ctx)](https://www.npmjs.com/package/@forjd/ctx)
 [![Coverage](https://img.shields.io/badge/coverage-95%25%2B-brightgreen)](scripts/check-coverage.ts)
 [![License: MIT](https://img.shields.io/github/license/forjd/ctx)](LICENSE)
 [![Bun](https://img.shields.io/badge/runtime-Bun-black?logo=bun)](https://bun.sh)
@@ -27,6 +28,21 @@ It can:
 
 ## Quick Start
 
+Run the published Bun CLI:
+
+```bash
+bunx @forjd/ctx --help
+```
+
+Or install it globally:
+
+```bash
+bun add --global @forjd/ctx
+ctx --help
+```
+
+From a source checkout:
+
 ```bash
 git clone https://github.com/forjd/ctx.git
 cd ctx
@@ -36,19 +52,13 @@ bun install
 bun run ctx --help
 ```
 
-Or run the published Bun CLI:
-
-```bash
-bunx @forjd/ctx --help
-```
-
 Against another repository:
 
 ```bash
 cd /path/to/your/repo
-bun run /path/to/ctx/src/cli/index.ts init
-bun run /path/to/ctx/src/cli/index.ts index
-bun run /path/to/ctx/src/cli/index.ts pack "add expiry reminders for source-of-funds requests"
+ctx init
+ctx index
+ctx pack "add expiry reminders for source-of-funds requests"
 ```
 
 ## Example
@@ -181,9 +191,9 @@ chore: update tooling
 
 ## Releases
 
-Release PRs are managed by Release Please on pushes to `main`.
+Release PRs are managed by Release Please on pushes to `main`, and package publishing uses npm trusted publishing from GitHub Actions.
 
-It uses Conventional Commits to update `package.json`, maintain `CHANGELOG.md`, tag the release, and create the GitHub release when the release PR is merged. The workflow can run with the default `GITHUB_TOKEN`; configure a `RELEASE_PLEASE_TOKEN` repository secret if Release Please PRs need to trigger other GitHub Actions workflows.
+It uses Conventional Commits to update `package.json`, maintain `CHANGELOG.md`, tag the release, create the GitHub release, and publish `@forjd/ctx` to npm when the release PR is merged. The workflow can run with the default `GITHUB_TOKEN`; configure a `RELEASE_PLEASE_TOKEN` repository secret if Release Please PRs need to trigger other GitHub Actions workflows.
 
 ## License
 
