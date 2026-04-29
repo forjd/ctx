@@ -1,0 +1,57 @@
+[
+  {
+    "id": "laravel-source-of-funds-reminders",
+    "repo": "tests/fixtures/laravel-basic",
+    "task": "add expiry reminders for source-of-funds requests",
+    "expectedFiles": [
+      "app/Models/SourceOfFundsRequest.php",
+      "app/Jobs/SendSourceOfFundsReminderJob.php",
+      "app/Notifications/SourceOfFundsReminderNotification.php",
+      "tests/Feature/SourceOfFundsReminderTest.php"
+    ],
+    "expectedTests": ["tests/Feature/SourceOfFundsReminderTest.php"],
+    "minFileRecallAt10": 0.75
+  },
+  {
+    "id": "node-http-account-auth",
+    "repo": "tests/fixtures/node-http-basic",
+    "task": "add authentication and validation to the accounts API route",
+    "expectedFiles": [
+      "src/routes/accounts.ts",
+      "src/middleware/requireAuth.ts",
+      "src/schemas/accountSchema.ts",
+      "src/handlers/getAccount.ts"
+    ],
+    "expectedTests": [],
+    "minFileRecallAt10": 0.75
+  },
+  {
+    "id": "vue-account-summary-context",
+    "repo": "tests/fixtures/node-vue-basic",
+    "task": "update the account summary component to use account context",
+    "expectedFiles": ["src/components/AccountSummary.vue", "src/context.ts"],
+    "expectedTests": [],
+    "minFileRecallAt10": 1
+  },
+  {
+    "id": "next-account-home-page",
+    "repo": "tests/fixtures/next-basic",
+    "task": "show account cards on the Next.js home page",
+    "expectedFiles": ["app/page.tsx", "components/AccountCard.tsx", "src/hooks/useAccount.ts"],
+    "expectedTests": [],
+    "minFileRecallAt10": 0.66
+  },
+  {
+    "id": "django-account-validation",
+    "repo": "tests/fixtures/django-basic",
+    "task": "add account validation to Django forms and serializers",
+    "expectedFiles": [
+      "accounts/forms.py",
+      "accounts/serializers.py",
+      "accounts/models.py",
+      "accounts/tests.py"
+    ],
+    "expectedTests": ["accounts/tests.py"],
+    "minFileRecallAt10": 0.75
+  }
+]
