@@ -32,6 +32,7 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
   if (existsSync(packageJson)) frameworks.add("node");
   if (
     packageHas(packageRaw, "vue") ||
+    packageHas(packageRaw, "nuxt") ||
     existsSync(join(root, "resources/js")) ||
     existsSync(join(root, "vite.config.ts")) ||
     existsSync(join(root, "vite.config.js")) ||
@@ -55,6 +56,15 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
   ) {
     frameworks.add("next");
     frameworks.add("react");
+  }
+  if (
+    packageHas(packageRaw, "nuxt") ||
+    existsSync(join(root, "nuxt.config.js")) ||
+    existsSync(join(root, "nuxt.config.ts")) ||
+    existsSync(join(root, "app.vue"))
+  ) {
+    frameworks.add("nuxt");
+    frameworks.add("vue");
   }
   if (
     packageHas(packageRaw, "svelte") ||
@@ -122,6 +132,7 @@ function conventions(frameworks: Framework[]): string[] {
   if (frameworks.includes("vue")) rules.push("Uses Vue frontend");
   if (frameworks.includes("react")) rules.push("Uses React frontend");
   if (frameworks.includes("next")) rules.push("Uses Next.js routing");
+  if (frameworks.includes("nuxt")) rules.push("Uses Nuxt routing and server conventions");
   if (frameworks.includes("svelte")) rules.push("Uses Svelte frontend");
   if (frameworks.includes("sveltekit")) rules.push("Uses SvelteKit routing");
   if (frameworks.includes("laravel")) {

@@ -13,6 +13,7 @@ const root = process.cwd();
 const laravelFixture = join(root, "tests/fixtures/laravel-basic");
 const vueFixture = join(root, "tests/fixtures/node-vue-basic");
 const nextFixture = join(root, "tests/fixtures/next-basic");
+const nuxtFixture = join(root, "tests/fixtures/nuxt-basic");
 const sveltekitFixture = join(root, "tests/fixtures/sveltekit-basic");
 
 describe("project detection", () => {
@@ -32,6 +33,13 @@ describe("project detection", () => {
     const project = await detectProject(nextFixture);
     expect(project.frameworks).toContain("react");
     expect(project.frameworks).toContain("next");
+    expect(project.frameworks).toContain("typescript");
+  });
+
+  test("detects Nuxt from fixture", async () => {
+    const project = await detectProject(nuxtFixture);
+    expect(project.frameworks).toContain("nuxt");
+    expect(project.frameworks).toContain("vue");
     expect(project.frameworks).toContain("typescript");
   });
 
@@ -61,6 +69,10 @@ describe("scanner", () => {
     expect(categorizeFile("app/account/page.tsx")).toBe("frontend-page");
     expect(categorizeFile("app/api/accounts/route.ts")).toBe("api-route");
     expect(categorizeFile("src/hooks/useAccount.ts")).toBe("frontend-hook");
+    expect(categorizeFile("pages/accounts/index.vue")).toBe("frontend-route");
+    expect(categorizeFile("layouts/default.vue")).toBe("frontend-layout");
+    expect(categorizeFile("components/AccountSummary.vue")).toBe("frontend-component");
+    expect(categorizeFile("composables/useAccount.ts")).toBe("frontend-composable");
     expect(categorizeFile("src/routes/dashboard/+page.svelte")).toBe("frontend-route");
     expect(categorizeFile("src/routes/+layout.svelte")).toBe("frontend-layout");
     expect(categorizeFile("src/lib/components/AccountCard.svelte")).toBe("frontend-component");

@@ -4,6 +4,7 @@ export type Framework =
   | "vue"
   | "react"
   | "next"
+  | "nuxt"
   | "svelte"
   | "sveltekit"
   | "typescript"
@@ -32,6 +33,7 @@ export type FileCategory =
   | "frontend-hook"
   | "api-route"
   | "frontend-layout"
+  | "frontend-composable"
   | "enum"
   | "unknown";
 
@@ -46,6 +48,7 @@ export interface ProjectConfig {
     vue: boolean;
     react: boolean;
     next: boolean;
+    nuxt: boolean;
     svelte: boolean;
     sveltekit: boolean;
   };

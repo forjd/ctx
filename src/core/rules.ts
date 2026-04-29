@@ -22,6 +22,12 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
     add("Use React components for frontend UI changes.", "package.json", "medium");
   if (project.frameworks.includes("next"))
     add("Respect Next.js app or pages routing conventions.", "package.json", "high");
+  if (project.frameworks.includes("nuxt"))
+    add(
+      "Use Nuxt conventions for pages, layouts, composables, and server routes.",
+      "nuxt.config",
+      "high",
+    );
   if (project.frameworks.includes("svelte"))
     add(
       "Use Svelte components under src/lib/components or framework routes.",
