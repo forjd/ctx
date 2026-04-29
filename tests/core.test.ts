@@ -15,6 +15,8 @@ const djangoFixture = join(root, "tests/fixtures/django-basic");
 const fastapiFixture = join(root, "tests/fixtures/fastapi-basic");
 const flaskFixture = join(root, "tests/fixtures/flask-basic");
 const goFixture = join(root, "tests/fixtures/go-basic");
+const wordpressFixture = join(root, "tests/fixtures/wordpress-basic");
+const drupalFixture = join(root, "tests/fixtures/drupal-basic");
 const laravelFixture = join(root, "tests/fixtures/laravel-basic");
 const symfonyFixture = join(root, "tests/fixtures/symfony-basic");
 const nestFixture = join(root, "tests/fixtures/nest-basic");
@@ -37,6 +39,18 @@ describe("project detection", () => {
     const project = await detectProject(symfonyFixture);
     expect(project.frameworks).toContain("symfony");
     expect(project.importantDirectories).toContain("src/Entity");
+  });
+
+  test("detects WordPress from fixture", async () => {
+    const project = await detectProject(wordpressFixture);
+    expect(project.frameworks).toContain("wordpress");
+    expect(project.importantDirectories).toContain("wp-content/plugins");
+  });
+
+  test("detects Drupal from fixture", async () => {
+    const project = await detectProject(drupalFixture);
+    expect(project.frameworks).toContain("drupal");
+    expect(project.importantDirectories).toContain("web/modules/custom");
   });
 
   test("detects Vue from fixture", async () => {
@@ -159,6 +173,16 @@ describe("scanner", () => {
     expect(categorizeFile("internal/accounts/handlers/accounts.go")).toBe("controller");
     expect(categorizeFile("internal/http/middleware/auth.go")).toBe("middleware");
     expect(categorizeFile("pkg/accounts/services/exporter.go")).toBe("service");
+    expect(categorizeFile("wp-content/plugins/accounts/accounts.php")).toBe("module");
+    expect(categorizeFile("wp-content/themes/ctx/functions.php")).toBe("service");
+    expect(categorizeFile("wp-content/themes/ctx/single-account.php")).toBe("frontend-page");
+    expect(categorizeFile("web/modules/custom/accounts/accounts.module")).toBe("module");
+    expect(categorizeFile("modules/custom/accounts/accounts.routing.yml")).toBe("route");
+    expect(categorizeFile("web/modules/custom/accounts/accounts.services.yml")).toBe("service");
+    expect(categorizeFile("web/modules/custom/accounts/accounts.info.yml")).toBe("config");
+    expect(categorizeFile("web/themes/custom/ctx/templates/account.html.twig")).toBe(
+      "frontend-page",
+    );
     expect(categorizeFile("demo/settings.py")).toBe("config");
     expect(categorizeFile("accounts/migrations/0001_initial.py")).toBe("migration");
     expect(categorizeFile("accounts/tests.py")).toBe("test");

@@ -14,6 +14,8 @@ export type Framework =
   | "fastapi"
   | "flask"
   | "go"
+  | "wordpress"
+  | "drupal"
   | "vue"
   | "react"
   | "next"
@@ -76,6 +78,8 @@ export interface ProjectConfig {
     fastapi: boolean;
     flask: boolean;
     go: boolean;
+    wordpress: boolean;
+    drupal: boolean;
     vue: boolean;
     react: boolean;
     next: boolean;

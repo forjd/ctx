@@ -1,0 +1,4 @@
+accounts.list:
+  path: '/accounts'
+  defaults:
+    _controller: '\Drupal\accounts\Controller\AccountController::list'

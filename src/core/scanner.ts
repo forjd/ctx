@@ -140,6 +140,14 @@ export function categorizeFile(path: string): FileCategory {
   if (/^(internal|pkg)\/.*\/handlers?\//.test(path) && path.endsWith(".go")) return "controller";
   if (/^(internal|pkg)\/.*\/middleware\//.test(path) && path.endsWith(".go")) return "middleware";
   if (/^(internal|pkg)\/.*\/services?\//.test(path) && path.endsWith(".go")) return "service";
+  if (/^wp-content\/plugins\/[^/]+\/[^/]+\.php$/.test(path)) return "module";
+  if (/^wp-content\/themes\/[^/]+\/functions\.php$/.test(path)) return "service";
+  if (/^wp-content\/themes\/[^/]+\/.+\.php$/.test(path)) return "frontend-page";
+  if (/^(web\/)?modules\/custom\/[^/]+\/[^/]+\.module$/.test(path)) return "module";
+  if (/^(web\/)?modules\/custom\/[^/]+\/[^/]+\.routing\.yml$/.test(path)) return "route";
+  if (/^(web\/)?modules\/custom\/[^/]+\/[^/]+\.services\.yml$/.test(path)) return "service";
+  if (/^(web\/)?(modules|themes)\/custom\/.+\.(yml|yaml)$/.test(path)) return "config";
+  if (/^(web\/)?themes\/custom\/[^/]+\/templates\//.test(path)) return "frontend-page";
   if (path.endsWith("/models.py")) return "model";
   if (path.endsWith("/views.py")) return "controller";
   if (path.endsWith("/forms.py")) return "request";
@@ -370,6 +378,7 @@ function languageFor(extension: string, path: string): string {
   if (extension === ".ts" || extension === ".tsx") return "typescript";
   if (extension === ".js" || extension === ".jsx") return "javascript";
   if (extension === ".json") return "json";
+  if (extension === ".yml" || extension === ".yaml") return "yaml";
   if (path.endsWith(".md")) return "markdown";
   return extension.replace(".", "") || "unknown";
 }
@@ -381,6 +390,7 @@ function isTestPath(path: string): boolean {
     /^test\/.*_test\.rb$/.test(path) ||
     path.endsWith("/tests.py") ||
     path.endsWith("_test.go") ||
+    path.includes("/tests/") ||
     /(^|\/)test_[^/]+\.py$/.test(path) ||
     /\.(test|spec)\.(ts|tsx|js|jsx)$/.test(path) ||
     path.endsWith("Test.php")

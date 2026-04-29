@@ -1,0 +1,6 @@
+<?php
+
+function accounts_help(): string
+{
+    return '';
+}

@@ -42,6 +42,26 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
     frameworks.add("symfony");
   }
 
+  if (
+    existsSync(join(root, "wp-config.php")) ||
+    existsSync(join(root, "wp-content")) ||
+    existsSync(join(root, "wp-includes")) ||
+    (await fileContains(composer, "johnpbloch/wordpress")) ||
+    (await fileContains(composer, "roots/wordpress"))
+  ) {
+    frameworks.add("wordpress");
+  }
+
+  if (
+    existsSync(join(root, "core/lib/Drupal.php")) ||
+    existsSync(join(root, "web/core/lib/Drupal.php")) ||
+    existsSync(join(root, "modules/custom")) ||
+    existsSync(join(root, "web/modules/custom")) ||
+    (await fileContains(composer, "drupal/core"))
+  ) {
+    frameworks.add("drupal");
+  }
+
   if (existsSync(packageJson)) frameworks.add("node");
   if (packageHas(packageRaw, "express")) frameworks.add("express");
   if (packageHas(packageRaw, "fastify")) frameworks.add("fastify");
@@ -186,6 +206,12 @@ function importantDirectories(root: string): string[] {
     "cmd",
     "internal",
     "pkg",
+    "wp-content/plugins",
+    "wp-content/themes",
+    "modules/custom",
+    "web/modules/custom",
+    "themes/custom",
+    "web/themes/custom",
     "app/Jobs",
     "app/Notifications",
     "database/migrations",
@@ -220,6 +246,8 @@ function conventions(frameworks: Framework[]): string[] {
   if (frameworks.includes("fastapi")) rules.push("Uses FastAPI route and dependency conventions");
   if (frameworks.includes("flask")) rules.push("Uses Flask route and blueprint conventions");
   if (frameworks.includes("go")) rules.push("Uses Go packages and tests");
+  if (frameworks.includes("wordpress")) rules.push("Uses WordPress plugin and theme conventions");
+  if (frameworks.includes("drupal")) rules.push("Uses Drupal module and theme conventions");
   if (frameworks.includes("nuxt")) rules.push("Uses Nuxt routing and server conventions");
   if (frameworks.includes("svelte")) rules.push("Uses Svelte frontend");
   if (frameworks.includes("sveltekit")) rules.push("Uses SvelteKit routing");

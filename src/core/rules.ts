@@ -72,6 +72,14 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
     add("Keep Go packages small and test package behaviour with go test.", "go.mod", "high");
     add("Run go test ./... for Go changes.", "go.mod", "medium");
   }
+  if (project.frameworks.includes("wordpress")) {
+    add("Keep WordPress plugin hooks and theme templates explicit.", "wp-content", "high");
+    add("Run PHPUnit for WordPress plugin or theme changes.", "composer.json", "medium");
+  }
+  if (project.frameworks.includes("drupal")) {
+    add("Keep Drupal module routing, services, and config YAML aligned.", "composer.json", "high");
+    add("Run PHPUnit for Drupal module or theme changes.", "composer.json", "medium");
+  }
   if (project.frameworks.includes("vue"))
     add("Use Vue components under resources/js or src/components.", "package.json", "high");
   if (project.frameworks.includes("react"))

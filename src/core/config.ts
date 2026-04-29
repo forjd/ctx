@@ -39,6 +39,8 @@ export function defaultConfig(): ProjectConfig {
       fastapi: true,
       flask: true,
       go: true,
+      wordpress: true,
+      drupal: true,
       vue: true,
       react: true,
       next: true,

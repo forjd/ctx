@@ -230,6 +230,8 @@ export function broaderTestCommands(
   if (frameworks.includes("fastapi")) commands.add("pytest");
   if (frameworks.includes("flask")) commands.add("pytest");
   if (frameworks.includes("go")) commands.add("go test ./...");
+  if (frameworks.includes("wordpress")) commands.add("vendor/bin/phpunit");
+  if (frameworks.includes("drupal")) commands.add("vendor/bin/phpunit");
   if (packageScripts.includes("test")) commands.add("bun test");
   if (
     frameworks.includes("node") ||
@@ -257,6 +259,8 @@ function testCommand(path: string): string {
   if (path.endsWith(".rb")) return `bin/rails test ${path}`;
   if (path.endsWith(".py")) return `python manage.py test ${path}`;
   if (path.endsWith("_test.go")) return "go test ./...";
+  if (path.startsWith("wp-content/") || /^(web\/)?modules\/custom\//.test(path))
+    return "vendor/bin/phpunit";
   return `bun test ${path}`;
 }
 

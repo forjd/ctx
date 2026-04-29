@@ -1,0 +1,3 @@
+services:
+  accounts.repository:
+    class: Drupal\accounts\AccountRepository
