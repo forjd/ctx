@@ -18,3 +18,15 @@ The first task set uses the small fixtures in `tests/fixtures`. Each task declar
 - `runtime ms`: time to detect, scan, infer rules, and build the pack
 
 Fixture gold files are intentionally small and imperfect. Use this benchmark to catch ranking regressions, then expand it with real historical commits for stronger evidence.
+
+## Outcome Benchmark
+
+The outcome benchmark checks recorded agent attempts for `no-context` versus `ctx-pack` variants.
+
+Run:
+
+```bash
+bun run benchmark:outcomes
+```
+
+See `benchmarks/outcomes/README.md` for the recording format.

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "laravel-source-of-funds-reminders",
+    "repo": "tests/fixtures/laravel-basic",
+    "task": "add expiry reminders for source-of-funds requests",
+    "expectedFiles": [
+      "app/Models/SourceOfFundsRequest.php",
+      "app/Jobs/SendSourceOfFundsReminderJob.php",
+      "app/Notifications/SourceOfFundsReminderNotification.php",
+      "tests/Feature/SourceOfFundsReminderTest.php"
+    ],
+    "expectedTests": ["tests/Feature/SourceOfFundsReminderTest.php"]
+  },
+  {
+    "id": "node-http-account-auth",
+    "repo": "tests/fixtures/node-http-basic",
+    "task": "add authentication and validation to the accounts API route",
+    "expectedFiles": [
+      "src/routes/accounts.ts",
+      "src/middleware/requireAuth.ts",
+      "src/schemas/accountSchema.ts",
+      "src/handlers/getAccount.ts"
+    ],
+    "expectedTests": []
+  },
+  {
+    "id": "django-account-validation",
+    "repo": "tests/fixtures/django-basic",
+    "task": "add account validation to Django forms and serializers",
+    "expectedFiles": [
+      "accounts/forms.py",
+      "accounts/serializers.py",
+      "accounts/models.py",
+      "accounts/tests.py"
+    ],
+    "expectedTests": ["accounts/tests.py"]
+  }
+]
