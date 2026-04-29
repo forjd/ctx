@@ -18,6 +18,8 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
   const composer = join(root, "composer.json");
   const packageJson = join(root, "package.json");
   const gemfile = join(root, "Gemfile");
+  const requirements = join(root, "requirements.txt");
+  const pyproject = join(root, "pyproject.toml");
   const packageRaw = existsSync(packageJson) ? await readFile(packageJson, "utf8") : "";
 
   if (
@@ -57,6 +59,13 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
     existsSync(join(root, "app/controllers"))
   )
     frameworks.add("rails");
+  if (
+    existsSync(join(root, "manage.py")) ||
+    (await fileContains(requirements, "Django")) ||
+    (await fileContains(requirements, "django")) ||
+    (await fileContains(pyproject, "django"))
+  )
+    frameworks.add("django");
   if (
     packageHas(packageRaw, "vue") ||
     packageHas(packageRaw, "nuxt") ||
@@ -172,6 +181,7 @@ function conventions(frameworks: Framework[]): string[] {
   if (frameworks.includes("react-router")) rules.push("Uses React Router route modules");
   if (frameworks.includes("astro")) rules.push("Uses Astro pages and content collections");
   if (frameworks.includes("rails")) rules.push("Uses Rails application conventions");
+  if (frameworks.includes("django")) rules.push("Uses Django application conventions");
   if (frameworks.includes("nuxt")) rules.push("Uses Nuxt routing and server conventions");
   if (frameworks.includes("svelte")) rules.push("Uses Svelte frontend");
   if (frameworks.includes("sveltekit")) rules.push("Uses SvelteKit routing");

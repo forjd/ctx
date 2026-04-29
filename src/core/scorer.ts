@@ -40,6 +40,7 @@ const categoryBoosts: Record<string, string[]> = {
   astro: ["frontend-route", "frontend-component", "frontend-content"],
   content: ["frontend-content"],
   rails: ["model", "controller", "migration", "route", "test"],
+  django: ["model", "controller", "migration", "route", "request", "resource", "test"],
   vue: ["frontend-page", "frontend-component"],
   nuxt: ["frontend-route", "frontend-component", "frontend-layout", "frontend-composable"],
   composable: ["frontend-composable"],
@@ -224,6 +225,7 @@ export function broaderTestCommands(
   if (frameworks.includes("laravel"))
     commands.add(filter ? `php artisan test --filter=${filter}` : "php artisan test");
   if (frameworks.includes("rails")) commands.add("bin/rails test");
+  if (frameworks.includes("django")) commands.add("python manage.py test");
   if (packageScripts.includes("test")) commands.add("bun test");
   if (
     frameworks.includes("node") ||
@@ -249,6 +251,7 @@ function testCommand(path: string): string {
   if (path.endsWith(".php")) return `php artisan test ${path}`;
   if (path.endsWith(".rb") && path.startsWith("spec/")) return `bundle exec rspec ${path}`;
   if (path.endsWith(".rb")) return `bin/rails test ${path}`;
+  if (path.endsWith(".py")) return `python manage.py test ${path}`;
   return `bun test ${path}`;
 }
 

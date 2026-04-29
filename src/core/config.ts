@@ -34,6 +34,7 @@ export function defaultConfig(): ProjectConfig {
       reactRouter: true,
       astro: true,
       rails: true,
+      django: true,
       vue: true,
       react: true,
       next: true,
