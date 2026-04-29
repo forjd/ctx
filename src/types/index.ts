@@ -5,6 +5,8 @@ export type Framework =
   | "fastify"
   | "hono"
   | "nestjs"
+  | "remix"
+  | "react-router"
   | "vue"
   | "react"
   | "next"
@@ -57,6 +59,8 @@ export interface ProjectConfig {
     fastify: boolean;
     hono: boolean;
     nestjs: boolean;
+    remix: boolean;
+    reactRouter: boolean;
     vue: boolean;
     react: boolean;
     next: boolean;

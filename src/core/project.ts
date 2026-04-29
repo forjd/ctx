@@ -35,6 +35,14 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
   if (packageHas(packageRaw, "hono")) frameworks.add("hono");
   if (packageHas(packageRaw, "@nestjs/core") || packageHas(packageRaw, "@nestjs/common"))
     frameworks.add("nestjs");
+  if (packageHas(packageRaw, "@remix-run/react") || packageHas(packageRaw, "@remix-run/node"))
+    frameworks.add("remix");
+  if (
+    packageHas(packageRaw, "react-router") ||
+    existsSync(join(root, "react-router.config.ts")) ||
+    existsSync(join(root, "react-router.config.js"))
+  )
+    frameworks.add("react-router");
   if (
     packageHas(packageRaw, "vue") ||
     packageHas(packageRaw, "nuxt") ||
@@ -141,6 +149,8 @@ function conventions(frameworks: Framework[]): string[] {
   if (frameworks.includes("fastify")) rules.push("Uses Fastify HTTP routes");
   if (frameworks.includes("hono")) rules.push("Uses Hono HTTP routes");
   if (frameworks.includes("nestjs")) rules.push("Uses NestJS modules and providers");
+  if (frameworks.includes("remix")) rules.push("Uses Remix route modules");
+  if (frameworks.includes("react-router")) rules.push("Uses React Router route modules");
   if (frameworks.includes("nuxt")) rules.push("Uses Nuxt routing and server conventions");
   if (frameworks.includes("svelte")) rules.push("Uses Svelte frontend");
   if (frameworks.includes("sveltekit")) rules.push("Uses SvelteKit routing");
