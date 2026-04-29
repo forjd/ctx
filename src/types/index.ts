@@ -53,6 +53,7 @@ export interface IndexedFile {
   isTest: boolean;
   isGenerated: boolean;
   symbols: SymbolInfo[];
+  dependencies: string[];
 }
 
 export interface SymbolInfo {
@@ -86,6 +87,12 @@ export interface RiskNote {
   text: string;
 }
 
+export interface DependencyEdge {
+  from: string;
+  to: string;
+  reason: string;
+}
+
 export interface ContextPack {
   task: string;
   generatedAt: string;
@@ -97,6 +104,7 @@ export interface ContextPack {
   tests: TestRecommendation[];
   rules: Rule[];
   risks: RiskNote[];
+  dependencyEdges: DependencyEdge[];
   suggestedCommands: string[];
   nextActions: string[];
 }
@@ -116,6 +124,8 @@ export interface FileExplanation {
   isTest: boolean;
   isGenerated: boolean;
   symbols: SymbolInfo[];
+  dependencies: string[];
+  dependents: string[];
   relatedTests: TestRecommendation[];
   applicableRules: Rule[];
   reasons: string[];

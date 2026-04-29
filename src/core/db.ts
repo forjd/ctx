@@ -37,6 +37,14 @@ export function migrate(db: Database): void {
     );
   `);
   db.run(`
+    create table if not exists dependencies (
+      id integer primary key autoincrement,
+      file_id integer not null,
+      target_path text not null,
+      foreign key (file_id) references files(id)
+    );
+  `);
+  db.run(`
     create table if not exists rules (
       id integer primary key autoincrement,
       text text not null,
@@ -87,9 +95,14 @@ export function replaceIndexedFiles(db: Database, files: IndexedFile[]): void {
     insert into symbols (file_id, name, kind, line_start, line_end)
     values (?, ?, ?, ?, ?)
   `);
+  const insertDependency = db.prepare(`
+    insert into dependencies (file_id, target_path)
+    values (?, ?)
+  `);
 
   const tx = db.transaction((rows: IndexedFile[]) => {
     db.run("delete from symbols");
+    db.run("delete from dependencies");
     db.run("delete from files");
     const indexedAt = new Date().toISOString();
     for (const file of rows) {
@@ -116,6 +129,9 @@ export function replaceIndexedFiles(db: Database, files: IndexedFile[]): void {
           symbol.lineEnd ?? null,
         );
       }
+      for (const dependency of file.dependencies) {
+        insertDependency.run(row.id, dependency);
+      }
     }
   });
   tx(files);
@@ -130,7 +146,13 @@ export function readIndexedFiles(db: Database): IndexedFile[] {
       "select f.path, s.name, s.kind, s.line_start, s.line_end from symbols s join files f on f.id = s.file_id",
     )
     .all() as Array<Record<string, unknown>>;
+  const dependencies = db
+    .query(
+      "select f.path, d.target_path from dependencies d join files f on f.id = d.file_id order by f.path, d.target_path",
+    )
+    .all() as Array<Record<string, unknown>>;
   const byPath = new Map<string, IndexedFile["symbols"]>();
+  const dependenciesByPath = new Map<string, string[]>();
   for (const symbol of symbols) {
     const path = String(symbol.path);
     const list = byPath.get(path) ?? [];
@@ -141,6 +163,12 @@ export function readIndexedFiles(db: Database): IndexedFile[] {
       lineEnd: symbol.line_end == null ? undefined : Number(symbol.line_end),
     });
     byPath.set(path, list);
+  }
+  for (const dependency of dependencies) {
+    const path = String(dependency.path);
+    const list = dependenciesByPath.get(path) ?? [];
+    list.push(String(dependency.target_path));
+    dependenciesByPath.set(path, list);
   }
 
   return rows.map((row) => ({
@@ -154,6 +182,7 @@ export function readIndexedFiles(db: Database): IndexedFile[] {
     isTest: Boolean(row.is_test),
     isGenerated: Boolean(row.is_generated),
     symbols: byPath.get(String(row.path)) ?? [],
+    dependencies: dependenciesByPath.get(String(row.path)) ?? [],
   }));
 }
 

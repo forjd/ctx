@@ -12,6 +12,11 @@ export function explainFile(path: string, files: IndexedFile[], rules: Rule[]): 
     isTest: file.isTest,
     isGenerated: file.isGenerated,
     symbols: file.symbols,
+    dependencies: file.dependencies,
+    dependents: files
+      .filter((candidate) => candidate.dependencies.includes(file.path))
+      .map((candidate) => candidate.path)
+      .sort(),
     relatedTests: recommendTests(files, [file.path]),
     applicableRules: rules.filter((rule) => appliesToFile(rule, file)).slice(0, 8),
     reasons: explanationReasons(file),

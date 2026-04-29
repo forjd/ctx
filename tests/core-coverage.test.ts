@@ -74,6 +74,7 @@ const samplePack: ContextPack = {
       text: "Queue retry behaviour should be checked.",
     },
   ],
+  dependencyEdges: [],
   suggestedCommands: ["php artisan test --filter=Reminder"],
   nextActions: ["Inspect the job."],
 };
@@ -226,6 +227,7 @@ describe("scorer branches", () => {
         isTest: false,
         isGenerated: true,
         symbols: [{ name: "ReportExportService", kind: "const", lineStart: 1 }],
+        dependencies: [],
       },
       {
         path: "resources/js/components/exports/ExportButton.test.ts",
@@ -238,6 +240,7 @@ describe("scorer branches", () => {
         isTest: true,
         isGenerated: false,
         symbols: [],
+        dependencies: [],
       },
     ];
 
@@ -266,6 +269,7 @@ describe("scorer branches", () => {
           isTest: false,
           isGenerated: false,
           symbols: [],
+          dependencies: [],
         },
       ],
       "update package lock",
@@ -289,6 +293,7 @@ describe("scorer branches", () => {
           isTest: false,
           isGenerated: false,
           symbols: [{ name: "ReportExportService", kind: "class", lineStart: 1 }],
+          dependencies: [],
         },
       ],
       "update report exports",
@@ -323,6 +328,7 @@ describe("context pack persistence", () => {
           isTest: false,
           isGenerated: false,
           symbols: [{ name: "Dashboard", kind: "type", lineStart: 1 }],
+          dependencies: [],
         },
       ],
       [],

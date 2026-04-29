@@ -1,6 +1,6 @@
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { ContextPack, IndexedFile, ProjectInfo, Rule } from "../types";
+import type { ContextPack, DependencyEdge, IndexedFile, ProjectInfo, Rule } from "../types";
 import { gitHistoryForTerms } from "./git";
 import { broaderTestCommands, rankFiles, recommendTests, taskTerms } from "./scorer";
 
@@ -34,6 +34,7 @@ export async function buildContextPack(
       task,
       ranked.map((file) => file.category),
     ),
+    dependencyEdges: dependencyEdges(files, targetPaths),
     suggestedCommands,
     nextActions: [
       "Inspect the highest ranked files before editing.",
@@ -44,6 +45,29 @@ export async function buildContextPack(
   };
 
   return { pack, history };
+}
+
+export function dependencyEdges(files: IndexedFile[], targetPaths: string[]): DependencyEdge[] {
+  const targets = new Set(targetPaths);
+  const edges: DependencyEdge[] = [];
+
+  for (const file of files) {
+    for (const dependency of file.dependencies) {
+      if (targets.has(file.path) || targets.has(dependency)) {
+        edges.push({
+          from: file.path,
+          to: dependency,
+          reason: targets.has(file.path)
+            ? "ranked file imports this dependency"
+            : "ranked file is imported by this file",
+        });
+      }
+    }
+  }
+
+  return edges
+    .sort((a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to))
+    .slice(0, 24);
 }
 
 export async function savePack(root: string, id: string, markdown: string): Promise<string> {

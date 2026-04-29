@@ -80,6 +80,14 @@ export function renderContextPack(pack: ContextPack, history: string[] = []): st
       ),
     ),
     "",
+    "## Dependency edges",
+    "",
+    ...bullets(
+      pack.dependencyEdges.length
+        ? pack.dependencyEdges.map((edge) => `${edge.from} -> ${edge.to}\n  Reason: ${edge.reason}`)
+        : ["No dependency edges found for ranked files."],
+    ),
+    "",
     "## Project rules",
     "",
     ...bullets(pack.rules.map((rule) => `${rule.text} (${rule.source})`)),
@@ -144,6 +152,12 @@ export function renderFileExplanation(report: FileExplanation): string {
         ? report.symbols.map((symbol) => `${symbol.kind} ${symbol.name}:${symbol.lineStart}`)
         : ["No symbols extracted."],
     ),
+    "",
+    "## Dependencies",
+    ...bullets(report.dependencies.length ? report.dependencies : ["No dependencies resolved."]),
+    "",
+    "## Dependents",
+    ...bullets(report.dependents.length ? report.dependents : ["No dependents resolved."]),
     "",
     "## Related tests",
     ...bullets(

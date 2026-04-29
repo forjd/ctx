@@ -27,6 +27,7 @@ describe("cli commands", () => {
     const payload = JSON.parse(new TextDecoder().decode(result.stdout));
     expect(payload.path).toBe("app/Jobs/SendSourceOfFundsReminderJob.php");
     expect(payload.category).toBe("job");
+    expect(payload.dependencies).toContain("app/Models/SourceOfFundsRequest.php");
     expect(payload.relatedTests[0].path).toBe("tests/Feature/SourceOfFundsReminderTest.php");
   });
 });

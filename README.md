@@ -113,6 +113,7 @@ ctx handoff --stdout
 - path-based framework and category detection
 - lightweight regex symbol extraction
 - keyword and synonym matching
+- lightweight import/dependency edge extraction
 - test filename/domain similarity
 - Git diff and history inspection
 - SQLite storage via `bun:sqlite`

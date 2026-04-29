@@ -1,5 +1,5 @@
 import { readdir, readFile, stat } from "node:fs/promises";
-import { extname, join, relative, sep } from "node:path";
+import { dirname, extname, join, normalize, relative, sep } from "node:path";
 import { defaultIgnoredDirectories } from "./config";
 import type { FileCategory, IndexedFile, SymbolInfo } from "../types";
 
@@ -32,7 +32,7 @@ export async function scanRepository(
   root: string,
   ignoredDirectories = defaultIgnoredDirectories,
 ): Promise<IndexedFile[]> {
-  const files: IndexedFile[] = [];
+  const files: Array<IndexedFile & { importSpecifiers: string[] }> = [];
   await walk(root, ignoredDirectories, async (absolutePath) => {
     const path = toRelative(root, absolutePath);
     const info = await stat(absolutePath);
@@ -57,10 +57,18 @@ export async function scanRepository(
       isTest,
       isGenerated,
       symbols: extractSymbols(path, content),
+      dependencies: [],
+      importSpecifiers: extractImportSpecifiers(path, content),
     });
     return true;
   });
-  return files.sort((a, b) => a.path.localeCompare(b.path));
+  const paths = new Set(files.map((file) => file.path));
+  return files
+    .map(({ importSpecifiers, ...file }) => ({
+      ...file,
+      dependencies: resolveDependencies(file.path, importSpecifiers, paths),
+    }))
+    .sort((a, b) => a.path.localeCompare(b.path));
 }
 
 async function walk(
@@ -125,6 +133,12 @@ export function extractSymbols(path: string, content: string): SymbolInfo[] {
   return [];
 }
 
+export function extractImportSpecifiers(path: string, content: string): string[] {
+  if (/\.(ts|tsx|js|jsx|vue)$/.test(path)) return extractTypeScriptImports(content);
+  if (path.endsWith(".php")) return extractPhpImports(content);
+  return [];
+}
+
 function extractPhpSymbols(content: string): SymbolInfo[] {
   const symbols: SymbolInfo[] = [];
   const lines = content.split("\n");
@@ -159,6 +173,72 @@ function extractTypeScriptSymbols(content: string): SymbolInfo[] {
     }
   });
   return symbols;
+}
+
+function extractTypeScriptImports(content: string): string[] {
+  const imports = new Set<string>();
+  const patterns = [
+    /\bimport\s+(?:type\s+)?(?:[^'"]+\s+from\s+)?["']([^"']+)["']/g,
+    /\bexport\s+[^'"]+\s+from\s+["']([^"']+)["']/g,
+    /\bimport\s*\(\s*["']([^"']+)["']\s*\)/g,
+    /\brequire\s*\(\s*["']([^"']+)["']\s*\)/g,
+  ];
+  for (const pattern of patterns) {
+    for (const match of content.matchAll(pattern)) {
+      if (match[1]) imports.add(match[1]);
+    }
+  }
+  return [...imports];
+}
+
+function extractPhpImports(content: string): string[] {
+  const imports = new Set<string>();
+  for (const match of content.matchAll(/^\s*use\s+([^;{]+);/gm)) {
+    const name = match[1]?.trim();
+    if (name && !name.includes("\\")) continue;
+    if (name) imports.add(name);
+  }
+  return [...imports];
+}
+
+function resolveDependencies(path: string, imports: string[], paths: Set<string>): string[] {
+  const resolved = new Set<string>();
+  for (const specifier of imports) {
+    const target = specifier.startsWith(".")
+      ? resolveRelativeImport(path, specifier, paths)
+      : resolvePhpNamespace(specifier, paths);
+    if (target && target !== path) resolved.add(target);
+  }
+  return [...resolved].sort();
+}
+
+function resolveRelativeImport(path: string, specifier: string, paths: Set<string>): string | null {
+  const base = toPosix(normalize(join(dirname(path), specifier)));
+  const candidates = [
+    base,
+    `${base}.ts`,
+    `${base}.tsx`,
+    `${base}.js`,
+    `${base}.jsx`,
+    `${base}.vue`,
+    `${base}/index.ts`,
+    `${base}/index.tsx`,
+    `${base}/index.js`,
+    `${base}/index.jsx`,
+    `${base}/index.vue`,
+  ];
+  return candidates.find((candidate) => paths.has(candidate)) ?? null;
+}
+
+function resolvePhpNamespace(specifier: string, paths: Set<string>): string | null {
+  const trimmed = specifier.replace(/^\\+/, "");
+  if (!trimmed.startsWith("App\\")) return null;
+  const candidate = `${trimmed.replace(/^App\\/, "app\\").replaceAll("\\", "/")}.php`;
+  return paths.has(candidate) ? candidate : null;
+}
+
+function toPosix(path: string): string {
+  return path.split(sep).join("/");
 }
 
 function symbolKind(pattern: RegExp): string {

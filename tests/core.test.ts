@@ -60,6 +60,18 @@ describe("scanner", () => {
     expect(symbols.map((symbol) => symbol.name)).toContain("buildContextPack");
     expect(symbols.map((symbol) => symbol.name)).toContain("ContextPack");
   });
+
+  test("resolves local dependency edges", async () => {
+    const laravelFiles = await scanRepository(laravelFixture);
+    const job = laravelFiles.find(
+      (file) => file.path === "app/Jobs/SendSourceOfFundsReminderJob.php",
+    );
+    expect(job?.dependencies).toContain("app/Models/SourceOfFundsRequest.php");
+
+    const vueFiles = await scanRepository(vueFixture);
+    const component = vueFiles.find((file) => file.path === "src/components/AccountSummary.vue");
+    expect(component?.dependencies).toContain("src/context.ts");
+  });
 });
 
 describe("context pack behaviours", () => {
@@ -120,6 +132,7 @@ describe("context pack behaviours", () => {
     expect(Array.isArray(pack.files)).toBe(true);
     expect(pack.files[0]).toHaveProperty("reason");
     expect(pack.tests[0]).toHaveProperty("command");
+    expect(pack.dependencyEdges[0]).toHaveProperty("from");
     expect(pack.project.frameworks).toContain("laravel");
   });
 
@@ -130,6 +143,7 @@ describe("context pack behaviours", () => {
     const report = explainFile("app/Jobs/SendSourceOfFundsReminderJob.php", files, rules);
     expect(report.category).toBe("job");
     expect(report.symbols.map((symbol) => symbol.name)).toContain("SendSourceOfFundsReminderJob");
+    expect(report.dependencies).toContain("app/Models/SourceOfFundsRequest.php");
     expect(report.relatedTests[0]?.path).toBe("tests/Feature/SourceOfFundsReminderTest.php");
     expect(report.reasons.length).toBeGreaterThan(0);
   });
