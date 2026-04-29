@@ -29,6 +29,7 @@ export function defaultConfig(): ProjectConfig {
       express: true,
       fastify: true,
       hono: true,
+      nestjs: true,
       vue: true,
       react: true,
       next: true,

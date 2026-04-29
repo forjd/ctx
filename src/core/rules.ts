@@ -26,6 +26,8 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
       "package.json",
       "medium",
     );
+  if (project.frameworks.includes("nestjs"))
+    add("Keep NestJS modules, controllers, and providers aligned.", "package.json", "high");
   if (project.frameworks.includes("vue"))
     add("Use Vue components under resources/js or src/components.", "package.json", "high");
   if (project.frameworks.includes("react"))

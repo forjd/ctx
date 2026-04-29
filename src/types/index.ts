@@ -4,6 +4,7 @@ export type Framework =
   | "express"
   | "fastify"
   | "hono"
+  | "nestjs"
   | "vue"
   | "react"
   | "next"
@@ -33,6 +34,7 @@ export type FileCategory =
   | "config"
   | "middleware"
   | "schema"
+  | "module"
   | "frontend-page"
   | "frontend-route"
   | "frontend-component"
@@ -54,6 +56,7 @@ export interface ProjectConfig {
     express: boolean;
     fastify: boolean;
     hono: boolean;
+    nestjs: boolean;
     vue: boolean;
     react: boolean;
     next: boolean;

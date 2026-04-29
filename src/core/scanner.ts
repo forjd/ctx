@@ -125,6 +125,10 @@ export function categorizeFile(path: string): FileCategory {
   if (path.startsWith("src/middleware/")) return "middleware";
   if (path.startsWith("src/handlers/")) return "action";
   if (path.startsWith("src/schemas/")) return "schema";
+  if (path.endsWith(".module.ts") || path.endsWith(".module.js")) return "module";
+  if (path.endsWith(".controller.ts") || path.endsWith(".controller.js")) return "controller";
+  if (path.endsWith(".service.ts") || path.endsWith(".service.js")) return "service";
+  if (path.endsWith(".resolver.ts") || path.endsWith(".resolver.js")) return "controller";
   if (path.startsWith("config/")) return "config";
   if (/^(app|src\/app)\/api\/.+\/route\.(ts|tsx|js|jsx)$/.test(path)) return "api-route";
   if (/^(app|src\/app)\/(.*\/)?(page|layout)\.(ts|tsx|js|jsx)$/.test(path)) return "frontend-page";
