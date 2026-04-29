@@ -76,6 +76,13 @@ export async function detectProject(root: string): Promise<ProjectInfo> {
   )
     frameworks.add("django");
   if (
+    (await fileContains(requirements, "fastapi")) ||
+    (await fileContains(pyproject, "fastapi")) ||
+    (await fileContains(join(root, "main.py"), "FastAPI")) ||
+    (await fileContains(join(root, "app/main.py"), "FastAPI"))
+  )
+    frameworks.add("fastapi");
+  if (
     packageHas(packageRaw, "vue") ||
     packageHas(packageRaw, "nuxt") ||
     existsSync(join(root, "resources/js")) ||
@@ -163,6 +170,8 @@ function importantDirectories(root: string): string[] {
     "src/Controller",
     "app/controllers",
     "app/Services",
+    "app/api",
+    "app/routers",
     "app/Jobs",
     "app/Notifications",
     "database/migrations",
@@ -194,6 +203,7 @@ function conventions(frameworks: Framework[]): string[] {
   if (frameworks.includes("astro")) rules.push("Uses Astro pages and content collections");
   if (frameworks.includes("rails")) rules.push("Uses Rails application conventions");
   if (frameworks.includes("django")) rules.push("Uses Django application conventions");
+  if (frameworks.includes("fastapi")) rules.push("Uses FastAPI route and dependency conventions");
   if (frameworks.includes("nuxt")) rules.push("Uses Nuxt routing and server conventions");
   if (frameworks.includes("svelte")) rules.push("Uses Svelte frontend");
   if (frameworks.includes("sveltekit")) rules.push("Uses SvelteKit routing");

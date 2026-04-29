@@ -11,6 +11,7 @@ export type Framework =
   | "astro"
   | "rails"
   | "django"
+  | "fastapi"
   | "vue"
   | "react"
   | "next"
@@ -70,6 +71,7 @@ export interface ProjectConfig {
     astro: boolean;
     rails: boolean;
     django: boolean;
+    fastapi: boolean;
     vue: boolean;
     react: boolean;
     next: boolean;

@@ -36,6 +36,7 @@ export function defaultConfig(): ProjectConfig {
       astro: true,
       rails: true,
       django: true,
+      fastapi: true,
       vue: true,
       react: true,
       next: true,

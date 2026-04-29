@@ -56,6 +56,14 @@ export async function inferRules(root: string, project: ProjectInfo): Promise<Ru
     add("Use Django migrations for model schema changes.", "manage.py", "high");
     add("Run python manage.py test for Django changes.", "manage.py", "medium");
   }
+  if (project.frameworks.includes("fastapi")) {
+    add(
+      "Keep FastAPI routers, dependencies, and Pydantic schemas explicit.",
+      "pyproject.toml",
+      "high",
+    );
+    add("Run pytest for FastAPI changes.", "pyproject.toml", "medium");
+  }
   if (project.frameworks.includes("vue"))
     add("Use Vue components under resources/js or src/components.", "package.json", "high");
   if (project.frameworks.includes("react"))

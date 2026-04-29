@@ -227,6 +227,7 @@ export function broaderTestCommands(
   if (frameworks.includes("symfony")) commands.add("php bin/phpunit");
   if (frameworks.includes("rails")) commands.add("bin/rails test");
   if (frameworks.includes("django")) commands.add("python manage.py test");
+  if (frameworks.includes("fastapi")) commands.add("pytest");
   if (packageScripts.includes("test")) commands.add("bun test");
   if (
     frameworks.includes("node") ||

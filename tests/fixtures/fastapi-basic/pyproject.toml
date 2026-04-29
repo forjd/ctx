@@ -1,0 +1,4 @@
+[project]
+dependencies = [
+  "fastapi>=0.110",
+]
