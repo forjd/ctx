@@ -76,33 +76,36 @@ Produces a Markdown context pack with:
 - risk notes
 - suggested next actions
 
-JSON output is available for agents:
+Agent-optimized output is available with `--agent`:
 
 ```bash
-ctx pack "add retry handling for report exports" --json
+ctx pack "add retry handling for report exports" --agent
 ```
 
-JSON payloads include `schemaVersion` so agents can parse them defensively as `ctx` evolves.
+For `ctx pack`, `--agent` emits compact JSON using the small pack limits by default and avoids
+writing saved pack files. JSON payloads include `schemaVersion` so agents can parse them
+defensively as `ctx` evolves.
 
 ## Commands
 
-| Command                   | Purpose                                                                   |
-| ------------------------- | ------------------------------------------------------------------------- |
-| `ctx init`                | Create `.ctx/`, SQLite storage, config, packs, and handoff directories.   |
-| `ctx index`               | Scan files, extract lightweight symbols, infer rules, and store metadata. |
-| `ctx map [--json]`        | Print detected stack, important directories, and conventions.             |
-| `ctx pack <task>`         | Generate a task-specific context pack in Markdown or JSON.                |
-| `ctx tests-for <file>`    | Recommend focused test commands for a file.                               |
-| `ctx tests-for --changed` | Recommend tests for the current Git diff.                                 |
-| `ctx diff-risk [--json]`  | Classify changed files and report risk signals.                           |
-| `ctx rules [--json]`      | Print inferred project rules.                                             |
-| `ctx explain <file>`      | Explain one indexed file's category, symbols, tests, and rules.           |
-| `ctx stale [--json]`      | Report whether the saved index is stale for files, config, or Git HEAD.   |
-| `ctx handoff`             | Write a Markdown handoff under `.ctx/handoffs/`.                          |
+| Command                                     | Purpose                                                                   |
+| ------------------------------------------- | ------------------------------------------------------------------------- |
+| `ctx init`                                  | Create `.ctx/`, SQLite storage, config, packs, and handoff directories.   |
+| `ctx index`                                 | Scan files, extract lightweight symbols, infer rules, and store metadata. |
+| `ctx map [--json\|--agent]`                 | Print detected stack, important directories, and conventions.             |
+| `ctx pack <task>`                           | Generate a task-specific context pack in Markdown or JSON.                |
+| `ctx tests-for <file> [--json\|--agent]`    | Recommend focused test commands for a file.                               |
+| `ctx tests-for --changed [--json\|--agent]` | Recommend tests for the current Git diff.                                 |
+| `ctx diff-risk [--json\|--agent]`           | Classify changed files and report risk signals.                           |
+| `ctx rules [--json\|--agent]`               | Print inferred project rules.                                             |
+| `ctx explain <file> [--json\|--agent]`      | Explain one indexed file's category, symbols, tests, and rules.           |
+| `ctx stale [--json\|--agent]`               | Report whether the saved index is stale for files, config, or Git HEAD.   |
+| `ctx handoff`                               | Write a Markdown handoff under `.ctx/handoffs/`.                          |
 
 Useful options:
 
 ```bash
+ctx pack "task" --agent
 ctx pack "task" --json
 ctx pack "task" --changed --json
 ctx pack "task" --markdown
@@ -110,6 +113,7 @@ ctx pack "task" --small
 ctx pack "task" --full --include-symbols
 ctx pack "task" --files 20
 ctx pack "task" --output .ctx/packs/my-task.md
+ctx tests-for --changed --agent
 ctx handoff --stdout
 ```
 

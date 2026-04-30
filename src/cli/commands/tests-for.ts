@@ -1,4 +1,5 @@
 import type { CliArgs } from "../index";
+import { wantsJson } from "../output-mode";
 import { readConfig } from "../../core/config";
 import { openDatabase, readIndexedFiles } from "../../core/db";
 import { changedFiles } from "../../core/git";
@@ -28,8 +29,6 @@ export async function testsForCommand(root: string, args: CliArgs): Promise<void
     : ["No direct test matches found; use broader commands."];
   const payload = { schemaVersion, targets, direct, broader, reasoning };
   console.log(
-    args.flags.has("json")
-      ? json(payload)
-      : renderTests("Recommended tests", direct, broader, reasoning),
+    wantsJson(args) ? json(payload) : renderTests("Recommended tests", direct, broader, reasoning),
   );
 }

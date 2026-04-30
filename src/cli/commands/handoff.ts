@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { CliArgs } from "../index";
+import { wantsJson } from "../output-mode";
 import { ctxPath } from "../../core/config";
 import { currentBranch, changedFiles, recentCommits } from "../../core/git";
 import { json } from "../../core/output";
@@ -54,7 +55,7 @@ export async function handoffCommand(root: string, args: CliArgs): Promise<void>
     risks,
   };
 
-  if (args.flags.has("json")) console.log(json(payload));
+  if (wantsJson(args)) console.log(json(payload));
   else if (args.flags.has("stdout")) console.log(markdown);
   else console.log(filePath.replace(`${root}/`, ""));
 }

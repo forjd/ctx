@@ -1,4 +1,5 @@
 import type { CliArgs } from "../index";
+import { wantsJson } from "../output-mode";
 import { openDatabase, readRules, replaceRules } from "../../core/db";
 import { json, renderRules } from "../../core/output";
 import { detectProject } from "../../core/project";
@@ -13,5 +14,5 @@ export async function rulesCommand(root: string, args: CliArgs): Promise<void> {
     replaceRules(db, rules);
   }
   db.close();
-  console.log(args.flags.has("json") ? json({ schemaVersion, rules }) : renderRules(rules));
+  console.log(wantsJson(args) ? json({ schemaVersion, rules }) : renderRules(rules));
 }

@@ -95,14 +95,14 @@ function printHelp(): void {
 Usage:
   ctx init
   ctx index
-  ctx map [--json]
-  ctx pack <task> [--json|--markdown] [--changed] [--small|--full] [--files n] [--include-symbols] [--output path]
-  ctx tests-for <file|--changed>
-  ctx diff-risk [--json]
-  ctx rules [--json]
-  ctx explain <file> [--json]
-  ctx stale [--json]
-  ctx handoff [--stdout|--json]
+  ctx map [--json|--agent]
+  ctx pack <task> [--agent|--json|--markdown] [--changed] [--small|--full] [--files n] [--include-symbols] [--output path]
+  ctx tests-for <file|--changed> [--json|--agent]
+  ctx diff-risk [--json|--agent]
+  ctx rules [--json|--agent]
+  ctx explain <file> [--json|--agent]
+  ctx stale [--json|--agent]
+  ctx handoff [--stdout|--json|--agent]
 `);
 }
 
