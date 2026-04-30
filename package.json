@@ -40,8 +40,6 @@
     "format:check": "oxfmt --config .oxfmt.json --check .",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
-    "benchmark": "bun run benchmarks/run.ts",
-    "benchmark:outcomes": "bun run benchmarks/outcomes/run.ts",
     "coverage": "bun run scripts/check-coverage.ts",
     "check": "bun run typecheck && bun run lint && bun run format:check && bun test",
     "prepare": "husky"

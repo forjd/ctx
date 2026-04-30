@@ -7,13 +7,6 @@
 
 * obey git ignored files when scanning ([6df2bff](https://github.com/forjd/ctx/commit/6df2bff435192556bd10213a869183c5b11c8460))
 
-## [1.3.0](https://github.com/forjd/ctx/compare/ctx-v1.2.0...ctx-v1.3.0) (2026-04-29)
-
-
-### Features
-
-* add ctx skill outcome variant ([f2264ab](https://github.com/forjd/ctx/commit/f2264ab5f04762e59ced4a156a5972dd3e742a26))
-
 ## [1.2.0](https://github.com/forjd/ctx/compare/ctx-v1.1.0...ctx-v1.2.0) (2026-04-29)
 
 
@@ -23,8 +16,6 @@
 * add FastAPI framework support ([64b2810](https://github.com/forjd/ctx/commit/64b2810a3487e865d8084c3cf0d10b5e735e36a6))
 * add Flask framework support ([2756f55](https://github.com/forjd/ctx/commit/2756f5592ec7e95ea692de9301a01c5824bb0c4a))
 * add Go project support ([a1e3655](https://github.com/forjd/ctx/commit/a1e3655bbf67b1a6acaac77451d47afe32575f4f))
-* add outcome benchmark scaffold ([e8c84a2](https://github.com/forjd/ctx/commit/e8c84a2219208fad32ec593a61baf9ffef31ce7e))
-* add retrieval benchmark ([94f671a](https://github.com/forjd/ctx/commit/94f671a782dec0fdb82fce6cc77960b657474038))
 * add Symfony framework support ([7a32265](https://github.com/forjd/ctx/commit/7a322653bc16dd87d1871976bd9f7f732100a302))
 
 ## [1.1.0](https://github.com/forjd/ctx/compare/ctx-v1.0.0...ctx-v1.1.0) (2026-04-29)
