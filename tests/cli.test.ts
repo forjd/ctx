@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -107,6 +107,37 @@ describe("cli commands", () => {
       "2",
     ]);
     expect(JSON.parse(limited.stdout).files).toHaveLength(2);
+  });
+
+  test("agent mode emits compact JSON without saving a pack file", async () => {
+    const fixture = await copyFixture("laravel-basic");
+    const result = runCli(fixture, [
+      "pack",
+      "add expiry reminders for source-of-funds requests",
+      "--agent",
+    ]);
+
+    expect(result.exitCode).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.schemaVersion).toBe(1);
+    expect(payload.files.length).toBeLessThanOrEqual(6);
+    expect(payload.files[0].symbols).toBeUndefined();
+    expect(await readdir(join(fixture, ".ctx/packs"))).toHaveLength(0);
+  });
+
+  test("agent mode uses JSON for inspection commands", async () => {
+    const fixture = await copyFixture("laravel-basic");
+    const tests = runCli(fixture, [
+      "tests-for",
+      "app/Jobs/SendSourceOfFundsReminderJob.php",
+      "--agent",
+    ]);
+    const stale = runCli(fixture, ["stale", "--agent"]);
+
+    expect(tests.exitCode).toBe(0);
+    expect(JSON.parse(tests.stdout)).toMatchObject({ schemaVersion: 1 });
+    expect(stale.exitCode).toBe(0);
+    expect(JSON.parse(stale.stdout)).toMatchObject({ schemaVersion: 1 });
   });
 
   test("pack changed uses the real Git diff from the real CLI", async () => {

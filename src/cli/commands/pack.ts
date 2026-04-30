@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { CliArgs } from "../index";
+import { wantsAgent, wantsJson } from "../output-mode";
 import { buildContextPack, savePack } from "../../core/context-pack";
 import { readConfig } from "../../core/config";
 import { openDatabase, readIndexedFiles, readRules } from "../../core/db";
@@ -34,7 +35,7 @@ export async function packCommand(root: string, args: CliArgs): Promise<void> {
     { ...packOptions(args), changedPaths },
   );
   const markdown = renderContextPack(pack, history);
-  const output = args.flags.has("json") ? json(pack) : markdown;
+  const output = wantsJson(args) ? json(pack) : markdown;
   const outputPath = args.values.get("output");
   if (outputPath) {
     await Bun.write(outputPath, output);
@@ -43,13 +44,15 @@ export async function packCommand(root: string, args: CliArgs): Promise<void> {
     console.log(output);
   }
 
-  const id = `${new Date().toISOString().slice(0, 10)}-${slug(task)}-${randomUUID().slice(0, 8)}.md`;
-  db.run(
-    "insert or replace into packs (id, task, output_markdown, output_json, created_at) values (?, ?, ?, ?, ?)",
-    [id, task, markdown, JSON.stringify(pack), pack.generatedAt],
-  );
+  if (!wantsAgent(args)) {
+    const id = `${new Date().toISOString().slice(0, 10)}-${slug(task)}-${randomUUID().slice(0, 8)}.md`;
+    db.run(
+      "insert or replace into packs (id, task, output_markdown, output_json, created_at) values (?, ?, ?, ?, ?)",
+      [id, task, markdown, JSON.stringify(pack), pack.generatedAt],
+    );
+    if (outputPath == null) await savePack(root, id, markdown);
+  }
   db.close();
-  if (outputPath == null) await savePack(root, id, markdown);
 }
 
 function packOptions(args: CliArgs) {
@@ -71,6 +74,15 @@ function packOptions(args: CliArgs) {
       ruleLimit: 16,
       edgeLimit: 48,
       includeSymbols: true,
+    };
+  }
+  if (wantsAgent(args)) {
+    return {
+      fileLimit: fileLimit ?? 6,
+      testLimit: 4,
+      ruleLimit: 5,
+      edgeLimit: 12,
+      includeSymbols: args.flags.has("include-symbols"),
     };
   }
   return {

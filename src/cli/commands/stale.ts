@@ -1,4 +1,5 @@
 import type { CliArgs } from "../index";
+import { wantsJson } from "../output-mode";
 import { openDatabase, readIndexedFiles } from "../../core/db";
 import { json } from "../../core/output";
 import { analyzeStaleIndex } from "../../core/stale";
@@ -9,7 +10,7 @@ export async function staleCommand(root: string, args: CliArgs): Promise<void> {
   const report = await analyzeStaleIndex(root, db, files);
   db.close();
 
-  if (args.flags.has("json")) {
+  if (wantsJson(args)) {
     console.log(json(report));
     return;
   }
