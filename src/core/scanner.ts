@@ -1,6 +1,7 @@
 import { readdir, readFile, stat } from "node:fs/promises";
 import { dirname, extname, join, normalize, relative, sep } from "node:path";
 import { defaultIgnoredDirectories } from "./config";
+import { gitText } from "./git";
 import type { FileCategory, IndexedFile, SymbolInfo } from "../types";
 
 const generatedPatterns = [
@@ -20,6 +21,11 @@ const generatedPatterns = [
 ];
 
 export async function hasAnyFileWithExtension(root: string, extension: string): Promise<boolean> {
+  const candidatePaths = await gitCandidatePaths(root, defaultIgnoredDirectories);
+  if (candidatePaths) {
+    return candidatePaths.some((path) => extname(path) === extension);
+  }
+
   let found = false;
   await walk(root, defaultIgnoredDirectories, async (path) => {
     if (extname(path) === extension) found = true;
@@ -33,9 +39,9 @@ export async function scanRepository(
   ignoredDirectories = defaultIgnoredDirectories,
 ): Promise<IndexedFile[]> {
   const files: Array<IndexedFile & { importSpecifiers: string[] }> = [];
-  await walk(root, ignoredDirectories, async (absolutePath) => {
-    const path = toRelative(root, absolutePath);
-    const info = await stat(absolutePath);
+  const visitFile = async (absolutePath: string, path: string): Promise<boolean> => {
+    const info = await stat(absolutePath).catch(() => null);
+    if (!info) return true;
     if (!info.isFile()) return true;
     if (info.size > 1_500_000) return true;
     const extension = extname(path);
@@ -61,7 +67,20 @@ export async function scanRepository(
       importSpecifiers: extractImportSpecifiers(path, content),
     });
     return true;
-  });
+  };
+
+  const candidatePaths = await gitCandidatePaths(root, ignoredDirectories);
+  if (candidatePaths) {
+    for (const path of candidatePaths) {
+      const keepGoing = await visitFile(join(root, path), path);
+      if (!keepGoing) break;
+    }
+  } else {
+    await walk(root, ignoredDirectories, async (absolutePath) => {
+      const path = toRelative(root, absolutePath);
+      return visitFile(absolutePath, path);
+    });
+  }
   const paths = new Set(files.map((file) => file.path));
   return files
     .map(({ importSpecifiers, ...file }) => ({
@@ -69,6 +88,29 @@ export async function scanRepository(
       dependencies: resolveDependencies(file.path, importSpecifiers, paths),
     }))
     .sort((a, b) => a.path.localeCompare(b.path));
+}
+
+async function gitCandidatePaths(
+  root: string,
+  ignoredDirectories: string[],
+): Promise<string[] | null> {
+  const isWorkTree = (await gitText(["rev-parse", "--is-inside-work-tree"], root)).trim();
+  if (isWorkTree !== "true") return null;
+
+  const output = await gitText(
+    ["ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+    root,
+  );
+  return output
+    .split("\0")
+    .filter(Boolean)
+    .map((path) => path.split(sep).join("/"))
+    .filter((path) => !hasIgnoredDirectory(path, ignoredDirectories))
+    .sort((a, b) => a.localeCompare(b));
+}
+
+function hasIgnoredDirectory(path: string, ignoredDirectories: string[]): boolean {
+  return path.split("/").some((part) => ignoredDirectories.includes(part));
 }
 
 async function walk(

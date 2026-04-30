@@ -1,3 +1,4 @@
+import { $ } from "bun";
 import { describe, expect, test } from "bun:test";
 import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -466,6 +467,26 @@ describe("scanner edge cases", () => {
 
     expect(await hasAnyFileWithExtension(root, ".ts")).toBe(true);
     expect(await hasAnyFileWithExtension(root, ".vue")).toBe(false);
+  });
+
+  test("obeys git ignored files when scanning a worktree", async () => {
+    const root = await tempRoot();
+    await $`git init`.cwd(root).quiet();
+    await mkdir(join(root, "src"), { recursive: true });
+    await mkdir(join(root, "ignored-dir"), { recursive: true });
+    await writeFile(join(root, ".gitignore"), "ignored.ts\nignored-dir/\n*.local\n");
+    await writeFile(join(root, "src", "app.ts"), "export const ok = true;\n");
+    await writeFile(join(root, "ignored.ts"), "export const ignored = true;\n");
+    await writeFile(join(root, "ignored-dir", "hidden.ts"), "export const hidden = true;\n");
+    await writeFile(join(root, "local.local"), "machine specific\n");
+
+    const paths = (await scanRepository(root)).map((file) => file.path);
+
+    expect(paths).toContain("src/app.ts");
+    expect(paths).not.toContain("ignored.ts");
+    expect(paths).not.toContain("ignored-dir/hidden.ts");
+    expect(paths).not.toContain("local.local");
+    expect(await hasAnyFileWithExtension(root, ".local")).toBe(false);
   });
 
   test("returns no files for an unreadable or missing root", async () => {
