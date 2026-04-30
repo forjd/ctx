@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/forjd/ctx/compare/ctx-v1.3.1...ctx-v1.4.0) (2026-04-30)
+
+
+### Features
+
+* add agent output mode ([a67b7c3](https://github.com/forjd/ctx/commit/a67b7c39027ad0aa07695aa5988132aac3187f3b))
+
 ## [1.3.1](https://github.com/forjd/ctx/compare/ctx-v1.3.0...ctx-v1.3.1) (2026-04-30)
 
 
