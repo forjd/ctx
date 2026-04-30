@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/forjd/ctx/compare/ctx-v1.3.0...ctx-v1.3.1) (2026-04-30)
+
+
+### Bug Fixes
+
+* obey git ignored files when scanning ([6df2bff](https://github.com/forjd/ctx/commit/6df2bff435192556bd10213a869183c5b11c8460))
+
 ## [1.3.0](https://github.com/forjd/ctx/compare/ctx-v1.2.0...ctx-v1.3.0) (2026-04-29)
 
 
